@@ -8,6 +8,10 @@ MAX_ITER = 100
 RE_MIN, RE_MAX = -2, 1
 IM_MIN, IM_MAX = -1, 1
 
+# colour scheme for our visualisation
+# https://coolors.co
+palette = ['#008148', '#C6C013', '#EF8A17', '#EF2917']
+
 
 class ZoomTool:
     """
@@ -58,10 +62,14 @@ class ZoomTool:
     def disconnect(self):
         self.ax.figure.canvas.mpl_disconnect(self.cidpress)
 
+# returns a hexadecimal colour to fill individual
+# pixel based on number of iterations
+def get_color(it):
+    color = (it / MAX_ITER) * (len(palette) - 1)
+    return palette[int(round(color))]
 
 def experiment_func(a, b):
     return a**2 + b
-
 
 def mandelbrot(c, func=(lambda a, b: a**2 + b)):
     z = 0
@@ -72,18 +80,15 @@ def mandelbrot(c, func=(lambda a, b: a**2 + b)):
 
     return n
 
-
 def main(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
     w, h = WIDTH, HEIGHT
     img = Image.new("RGB", (w, h), (0, 0, 0))
     draw = ImageDraw.Draw(img)
-
     for x in range(0, w):
         for y in range(0, h):
             c = complex(re[0] + (x / w) * (re[1] - re[0]), im[0] + (y / h) * (im[1] - im[0]))
             n = mandelbrot(c, experiment_func)
-            color = 255 - int(n * 255 / MAX_ITER)
-            draw.point([x, y], (color, color, color))
+            draw.point([x, y], fill = get_color(n))
 
     return img
 
