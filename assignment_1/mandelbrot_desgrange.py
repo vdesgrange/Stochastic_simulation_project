@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from PIL import Image, ImageDraw
 import math
 
-WIDTH = 600
-HEIGHT = 400
-MAX_ITER = 100
-RE_MIN, RE_MAX = -2, 1
-IM_MIN, IM_MAX = -1, 1
+WIDTH = 1000
+HEIGHT = 1000
+MAX_ITER = 700
+RE_MIN, RE_MAX = -2.02, 0.49
+IM_MIN, IM_MAX = -1.15, 1.15
 
 # colour scheme for our visualisation
 # https://coolors.co
@@ -55,12 +56,43 @@ class ZoomTool:
         print("Imaginary (min, max) = ", IM_MIN, IM_MAX)
 
         # Compute new fractal and refresh plot
-        new_img = main(self.re, self.im)
+        new_img, result = main(self.re, self.im)
         self.ax.imshow(new_img)
         self.ax.figure.canvas.draw_idle()
 
     def disconnect(self):
         self.ax.figure.canvas.mpl_disconnect(self.cidpress)
+
+# takes a numpy array(size = h*w) of 1,0 vals as input
+# 1 = within set
+# 0 = outside set
+def monte_carlo(grid):
+    unique, counts = np.unique(grid, return_counts=True)
+    print(dict(zip(unique, counts)))
+    w, h = WIDTH, HEIGHT
+    # choose n random grid points to sample
+    n = 100000
+    count = 0 
+    y_samp = [int(round(y)) for y in np.random.uniform(0, HEIGHT - 1, n).tolist()]
+    x_samp = [int(round(x)) for x in np.random.uniform(0, WIDTH - 1, n).tolist()]
+    for j in range(0, n):
+        if grid[y_samp[j], x_samp[j]] == 1:
+            count += 1
+    # proportion of sample points within the set
+    prop = count / n 
+    # area of the complex plane
+    a = (abs(RE_MIN) + abs(RE_MAX)) * (abs(IM_MIN) + abs(IM_MAX))
+    # scale proportion to the size of our complex plane
+    est = prop * a
+    print('Estimate of area is %f' % (est))
+    
+    
+# mapping from gridpoints to the complex plane
+def grid_map(x, y, re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
+    w, h = WIDTH, HEIGHT
+    r_part = re[0] + (x / w) * (re[1] - re[0])
+    i_part = im[0] + (y / h) * (im[1] - im[0])
+    return complex(r_part, i_part)
 
 # returns a hexadecimal colour to fill individual
 # pixel based on number of iterations
@@ -84,13 +116,15 @@ def main(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
     w, h = WIDTH, HEIGHT
     img = Image.new("RGB", (w, h), (0, 0, 0))
     draw = ImageDraw.Draw(img)
+    result = np.zeros((h, w))
     for x in range(0, w):
         for y in range(0, h):
-            c = complex(re[0] + (x / w) * (re[1] - re[0]), im[0] + (y / h) * (im[1] - im[0]))
+            c = grid_map(x, y, re, im)
             n = mandelbrot(c, experiment_func)
+            if n == MAX_ITER:
+                result[y,x] = 1
             draw.point([x, y], fill = get_color(n))
-
-    return img
+    return img, result
 
 
 def graphic_tool(img):
@@ -105,5 +139,7 @@ def graphic_tool(img):
     plot_with_zoom.disconnect()
 
 if __name__ == '__main__':
-    img = main()
+    img, result = main()
     graphic_tool(img)
+    monte_carlo(result)
+
