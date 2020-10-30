@@ -1,9 +1,9 @@
 import numpy as np
-from mandelbrot import mandelbrot, grid_map
+import time
+from mandelbrot import mandelbrot, grid_map, MAX_ITER
 
 WIDTH = 1000
 HEIGHT = 1000
-MAX_ITER = 700
 RE_MIN, RE_MAX = -2.02, 0.49
 IM_MIN, IM_MAX = -1.15, 1.15
 
@@ -29,6 +29,10 @@ def monte_carlo_integration(width, height, re, im):
     n, count = 100000, 0
     x_samp = np.random.uniform(0, w, n)
     y_samp = np.random.uniform(0, h, n)
+
+    # Running time
+    start_time = time.time()
+
     complex_samp = list(map(lambda x, y: grid_map(x, y, (re_min, re_max), (im_min, im_max)), x_samp, y_samp))
     for c in complex_samp:
         count += int(mandelbrot(c) == MAX_ITER)
@@ -42,7 +46,7 @@ def monte_carlo_integration(width, height, re, im):
 
     # Scale proportion to the size of our complex plane
     est = prop * a
-
+    print("--- %s seconds ---" % (time.time() - start_time))
     print('Estimation of area is %f' % (est))
 
     return est
