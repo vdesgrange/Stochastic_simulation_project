@@ -90,13 +90,6 @@ def get_color(it):
     return palette[int(round(color))]
 
 
-def experiment_func(a, b):
-    """
-    Function used by mandelbrot to compute Z_n+1
-    """
-    return a**2 + b
-
-
 def mandelbrot(c, func=(lambda a, b: a**2 + b)):
     """
     Estimate if f(z)=z^2 + c diverges with complex number c.
@@ -136,7 +129,7 @@ def mandelbrot_set(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
             c = grid_map(x, y, re, im)
 
             # Determine if there's divergence with c.
-            n = mandelbrot(c, experiment_func)
+            n = mandelbrot(c)
             if n == MAX_ITER:
                 result[y, x] = 1
             draw.point([x, y], fill=get_color(n))

@@ -3,6 +3,7 @@ import numpy as np
 
 def monte_carlo_integration(grid, width, height, re, im):
     """
+    === WRONG === We are not suppose to have a grid in entry. 
     Monte-carlo integration algorithm.
     Estimates the surface value of a complex plan.
     :param grid: Numpy array(h, w) of values i in (0, 1). Within the surface is 1, outside the surface is 0.
@@ -29,7 +30,7 @@ def monte_carlo_integration(grid, width, height, re, im):
     # y_samp = [int(round(y)) for y in np.random.uniform(0, h - 1, n).tolist()]  # Use np.random.randint instead ?
     # x_samp = [int(round(x)) for x in np.random.uniform(0, w - 1, n).tolist()]
 
-    for j in range(0, n):
+    for j in range(0, n):  # No !
         if grid[y_samp[j], x_samp[j]] == 1:
             count += 1
 
