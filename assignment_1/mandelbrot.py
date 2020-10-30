@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
 
-from monte_carlo import monte_carlo_integration
+# from monte_carlo import monte_carlo_integration
 
 WIDTH = 1000
 HEIGHT = 1000
@@ -158,5 +158,5 @@ def graphic_tool(img):
 if __name__ == '__main__':
     img, result = mandelbrot_set()
     graphic_tool(img)
-    monte_carlo_integration(result, WIDTH, HEIGHT, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
+    # monte_carlo_integration(result, WIDTH, HEIGHT, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
 
