@@ -3,7 +3,7 @@ import time
 import mandelbrot
 
 
-def monte_carlo_integration(width, height, re, im, n=100000, max_i=mandelbrot.MAX_ITER):
+def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_ITER):
     """
     Monte-carlo integration algorithm.
     Estimates the surface value of a complex plan.
@@ -24,30 +24,28 @@ def monte_carlo_integration(width, height, re, im, n=100000, max_i=mandelbrot.MA
 
     # Choose n random grid points to sample
     count = 0
-    x_samp = np.random.uniform(0, w, n)
-    y_samp = np.random.uniform(0, h, n)
+    x_samp = np.random.uniform(0, w, s)
+    y_samp = np.random.uniform(0, h, s)
 
     # Running time
     start_time = time.time()
 
     # Convert euclidian coordinates sample to complex
-    complex_samp = list(map(lambda x, y: mandelbrot.grid_map(x, y, (re_min, re_max), (im_min, im_max)), x_samp, y_samp))
+    samples = list(map(lambda x, y: mandelbrot.grid_map(x, y, (re_min, re_max), (im_min, im_max)), x_samp, y_samp))
 
-    iteration_hist = np.zeros(n)  # Keep track of number of iterations per sample
-    for idx, c in enumerate(complex_samp):
-        res = mandelbrot.mandelbrot(c, max_i)
-        count += int(res == max_i)
-        iteration_hist[idx] = res  # Store number of iteration reach for each complex number
+    details = np.zeros(s)  # Keep track of number of iterations per sample
+    for idx, c in enumerate(samples):
+        res = mandelbrot.mandelbrot(c, i)
+        count += int(res == i)
+        details[idx] = res  # Store number of iteration reach for each complex number
 
     # Proportion of sample points within the set scaled to size of complex plane
-    est = (count / n) * a
-    # estimation_iteration = [(i / n) * a for i in iteration_hist]
-
+    estimate = (count / s) * a
 
     print("--- %s seconds ---" % (time.time() - start_time))
-    print('Estimation of mandelbrot surface is %f' % (est))
+    print('Estimation of mandelbrot surface is %f' % (estimate))
 
-    return est, iteration_hist, complex_samp
+    return estimate, samples, details
 
 
 if __name__ == '__main__':
@@ -56,5 +54,5 @@ if __name__ == '__main__':
         height=mandelbrot.HEIGHT,
         re=(mandelbrot.RE_MIN, mandelbrot.RE_MAX),
         im=(mandelbrot.IM_MIN, mandelbrot.IM_MAX),
-        n=100000,
-        max_i=1000)
+        s=100000,
+        i=1000)

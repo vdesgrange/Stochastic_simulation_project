@@ -12,8 +12,8 @@ def difference_plot(x, y):
 
 def complex_plan_plot(re, im):
     fig, ax = plt.subplots(dpi=300)
-    ax.set_xlabel('Re(A[n]')
-    ax.set_ylabel('Im(A[n]')
-    ax.set_title(r'Convergence of complex number $c \approx {:3f} + {:3f}i$'.format(re[0], im[0]))
+    ax.set_xlabel('Re(A[n])')
+    ax.set_ylabel('Im(A[n])')
+    ax.set_title(r'Convergence of complex number $c \approx {:3f} + ({:3f})i$'.format(re[0], im[0]))
     ax.plot(re, im, color='lightskyblue', marker='o', linewidth='.5')
     plt.show()
