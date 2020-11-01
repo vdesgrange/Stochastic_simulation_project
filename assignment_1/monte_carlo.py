@@ -7,6 +7,8 @@ HEIGHT = 1000
 RE_MIN, RE_MAX = -2.02, 0.49
 IM_MIN, IM_MAX = -1.15, 1.15
 
+def pure_random(w, h, n):
+    return (np.random.uniform(0, w, n), np.random.uniform(0, h, n))    
 
 def monte_carlo_integration(width, height, re, im):
     """
@@ -27,8 +29,7 @@ def monte_carlo_integration(width, height, re, im):
 
     # Choose n random grid points to sample
     n, count = 100000, 0
-    x_samp = np.random.uniform(0, w, n)
-    y_samp = np.random.uniform(0, h, n)
+    x_samp, y_samp = pure_random(w, h, n)
 
     # Running time
     start_time = time.time()
