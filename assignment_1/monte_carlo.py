@@ -1,16 +1,16 @@
 import numpy as np
 import time
-from mandelbrot import mandelbrot, grid_map, MAX_ITER
+import mandelbrot
 
-WIDTH = 1000
-HEIGHT = 1000
-RE_MIN, RE_MAX = -2.02, 0.49
-IM_MIN, IM_MAX = -1.15, 1.15
 
+<<<<<<< HEAD
 def pure_random(w, h, n):
     return (np.random.uniform(0, w, n), np.random.uniform(0, h, n))    
 
 def monte_carlo_integration(width, height, re, im):
+=======
+def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_ITER):
+>>>>>>> ef800794fac559d22951db6e2f298f08b8ce7400
     """
     Monte-carlo integration algorithm.
     Estimates the surface value of a complex plan.
@@ -19,87 +19,52 @@ def monte_carlo_integration(width, height, re, im):
     :param height: height of the plan
     :param re: tuple of minimal and maximal coordinates of real axis
     :param im: tuple of minimal and maximal coordinates of imaginary axis.
-    :return: Estimation of the surface in complex units.
+    :return: Array of estimation of the surface in complex units.
     """
     # Get grid wight and height
     w, h = width, height
     # Get real and imaginary minimal and maximal axis coordinates.
     re_min, re_max = re[0], re[1]
     im_min, im_max = im[0], im[1]
+    # Area of the complex plane
+    a = (re_max - re_min) * (im_max - im_min)
 
     # Choose n random grid points to sample
+<<<<<<< HEAD
     n, count = 100000, 0
     x_samp, y_samp = pure_random(w, h, n)
+=======
+    count = 0
+    x_samp = np.random.uniform(0, w, s)
+    y_samp = np.random.uniform(0, h, s)
+>>>>>>> ef800794fac559d22951db6e2f298f08b8ce7400
 
     # Running time
     start_time = time.time()
 
-    complex_samp = list(map(lambda x, y: grid_map(x, y, (re_min, re_max), (im_min, im_max)), x_samp, y_samp))
-    for c in complex_samp:
-        count += int(mandelbrot(c) == MAX_ITER)
+    # Convert euclidian coordinates sample to complex
+    samples = list(map(lambda x, y: mandelbrot.grid_map(x, y, (re_min, re_max), (im_min, im_max)), x_samp, y_samp))
 
-    # Proportion of sample points within the set
-    prop = count / n
+    details = np.zeros(s)  # Keep track of number of iterations per sample
+    for idx, c in enumerate(samples):
+        res = mandelbrot.mandelbrot(c, i)
+        count += int(res == i)
+        details[idx] = res  # Store number of iteration reach for each complex number
 
-    # Area of the complex plane
-    a = (re_max - re_min) * (im_max - im_min)
-    # a = (abs(re_min) + abs(re_max)) * (abs(im_min) + abs(im_max))  # (RE_MAX - RE_MIN) * (IM_MAX - IM_MIN)
+    # Proportion of sample points within the set scaled to size of complex plane
+    estimate = (count / s) * a
 
-    # Scale proportion to the size of our complex plane
-    est = prop * a
     print("--- %s seconds ---" % (time.time() - start_time))
-    print('Estimation of area is %f' % (est))
+    print('Estimation of mandelbrot surface is %f' % (estimate))
 
-    return est
+    return estimate, samples, details
 
 
 if __name__ == '__main__':
-    monte_carlo_integration(WIDTH, HEIGHT, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
-
-
-def invalid_monte_carlo_integration(grid, width, height, re, im):
-    """
-    === WRONG === We are not suppose to have a grid in entry.
-    Monte-carlo integration algorithm.
-    Estimates the surface value of a complex plan.
-    :param grid: Numpy array(h, w) of values i in (0, 1). Within the surface is 1, outside the surface is 0.
-    :param width: width of the plan
-    :param height: height of the plan
-    :param re: tuple of minimal and maximal coordinates of real axis
-    :param im: tuple of minimal and maximal coordinates of imaginary axis.
-    :return: Estimation of the surface in complex units.
-    """
-    # Get grid wight and height
-    w, h = width, height
-    # Get real and imaginary minimal and maximal axis coordinates.
-    re_min, re_max = re[0], re[1]
-    im_min, im_max = im[0], im[1]
-
-    # Get information about amount of possible values (0, 1) and number of them.
-    unique, counts = np.unique(grid, return_counts=True)  # If we have this information, what's the purpose of Monte-Carlo ???
-    print(dict(zip(unique, counts)))
-
-    # Choose n random grid points to sample
-    n, count = 100000, 0
-    y_samp = np.random.randint(0, h, n)
-    x_samp = np.random.randint(0, w, n)
-    # y_samp = [int(round(y)) for y in np.random.uniform(0, h - 1, n).tolist()]  # Use np.random.randint instead ?
-    # x_samp = [int(round(x)) for x in np.random.uniform(0, w - 1, n).tolist()]
-
-    for j in range(0, n):  # No !
-        if grid[y_samp[j], x_samp[j]] == 1:
-            count += 1
-
-    # Proportion of sample points within the set
-    prop = count / n
-
-    # Area of the complex plane
-    a = (re_max - re_min) * (im_max - im_min)
-    # a = (abs(re_min) + abs(re_max)) * (abs(im_min) + abs(im_max))  # (RE_MAX - RE_MIN) * (IM_MAX - IM_MIN)
-
-    # Scale proportion to the size of our complex plane
-    est = prop * a
-
-    print('Estimation of area is %f' % (est))
-
-    return est
+    monte_carlo_integration(
+        width=mandelbrot.WIDTH,
+        height=mandelbrot.HEIGHT,
+        re=(mandelbrot.RE_MIN, mandelbrot.RE_MAX),
+        im=(mandelbrot.IM_MIN, mandelbrot.IM_MAX),
+        s=100000,
+        i=1000)
