@@ -69,7 +69,7 @@ def study_convergence():
     _, complex_sample, details = monte_carlo_integration(width=w, height=h, re=re, im=im, s=100, i=max_i)
 
     # Index of a sample of complex number which converge for at least max_i iterations.
-    idx = np.random.choice(np.argwhere(details == max_i)[:, 0], 10)
+    idx = np.random.choice(np.argwhere(details == max_i)[:, 0], 5)
 
     # Sample of complex numbers which converge for at least max_i iterations.
     sample = np.array(complex_sample)[idx]
@@ -79,5 +79,5 @@ def study_convergence():
 
 
 if __name__ == '__main__':
-    # study_difference()
+    study_difference()
     study_convergence()
