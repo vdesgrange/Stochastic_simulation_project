@@ -4,8 +4,8 @@ from PIL import Image, ImageDraw
 
 # from monte_carlo import monte_carlo_integration
 
-WIDTH = 1000
-HEIGHT = 1000
+WIDTH = 600
+HEIGHT = 400
 MAX_ITER = 700
 RE_MIN, RE_MAX = -2.02, 0.49
 IM_MIN, IM_MAX = -1.15, 1.15
@@ -32,7 +32,7 @@ class ZoomTool:
     def on_press(self, event):
         scale_factor = 0.1  # scale
         re, im = self.re, self.im  # Current real axis x (min, max) and imaginary axis y (min, max)
-        w, h = WIDTH, HEIGHT  # Plot width
+        w, h = int(abs(self.ax.viewLim.size[0])), int(abs(self.ax.viewLim.size[1]))  # Plot width
 
         # Retrieve (x, y) coordinates clicked
         xdata = event.xdata
@@ -47,14 +47,13 @@ class ZoomTool:
         cur_yrange = (im[1] - im[0])*.5
 
         # Determine new image window in complex coordinates
-        global RE_MIN, RE_MAX, IM_MIN, IM_MAX  # Update global variable
-        RE_MIN, RE_MAX = x - cur_xrange * scale_factor, x + cur_xrange * scale_factor
-        IM_MIN, IM_MAX = y - cur_yrange * scale_factor, y + cur_yrange * scale_factor
-        self.re = (RE_MIN, RE_MAX)
-        self.im = (IM_MIN, IM_MAX)
+        re_min, re_max = x - cur_xrange * scale_factor, x + cur_xrange * scale_factor
+        im_min, im_max = y - cur_yrange * scale_factor, y + cur_yrange * scale_factor
+        self.re = (re_min, re_max)
+        self.im = (im_min, im_max)
 
-        print("Real (min, max) = ", RE_MIN, RE_MAX)
-        print("Imaginary (min, max) = ", IM_MIN, IM_MAX)
+        print("Real (min, max) = ", re_min, re_max)
+        print("Imaginary (min, max) = ", im_min, im_max)
 
         # Compute new fractal and refresh plot
         new_img, result = mandelbrot_set(self.re, self.im)
@@ -63,6 +62,25 @@ class ZoomTool:
 
     def disconnect(self):
         self.ax.figure.canvas.mpl_disconnect(self.cidpress)
+
+
+def mandelbrot_visualizer_tool(img):
+    """
+    Simple graphic tool to plot image of Mandelbrot set, and zoom in.
+    :param img: mandelbrot set
+    """
+    fig = plt.figure()
+    ax = fig.subplots()
+
+    ax.imshow(img)
+    ax.axis("off")
+    ax.set_title("Mandelbrot")
+
+    # Add simple zoom in tool.
+    plot_with_zoom = ZoomTool(ax, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
+    plot_with_zoom.connect()
+    plt.show()
+    plot_with_zoom.disconnect()
 
 
 def grid_map(x, y, re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
@@ -90,20 +108,38 @@ def get_color(it):
     return palette[int(round(color))]
 
 
-def mandelbrot(c, func=(lambda a, b: a**2 + b)):
+def mandelbrot(c, max_iter=MAX_ITER):
     """
     Estimate if f(z)=z^2 + c diverges with complex number c.
     :param c: Complex number (point from the grid) to use.
-    :param func: function used to compute Z_n+1
+    :param max_iter: Maximal number of iteration fixed to consider complex number in mandelbrot set.
     :return: Number of iteration until divergence or a fixed maximal number of iteration.
     """
     z = 0
     n = 0
-    while abs(z) <= 2 and n < MAX_ITER:
-        z = func(z, c)
+    while abs(z) <= 2 and n < max_iter:
+        z = z**2 + c
         n += 1
 
     return n
+
+
+def mandelbrot_detailed(c, max_iter=MAX_ITER):
+    """
+    Estimate if f(z)=z^2 + c diverges with complex number c.
+    :param c: Complex number (point from the grid) to use.
+    :param max_iter: Maximal number of iteration fixed to consider complex number in mandelbrot set.
+    :return: Array of computed z
+    """
+    z = 0
+    n = 0
+    fz = [c]
+    while abs(z) <= 2 and n < max_iter:
+        z = z**2 + c
+        fz.append(z)
+        n += 1
+
+    return fz
 
 
 def mandelbrot_set(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
@@ -136,27 +172,7 @@ def mandelbrot_set(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX)):
     return img, result
 
 
-def graphic_tool(img):
-    """
-    Simple graphic tool to plot image of Mandelbrot set, and zoom in.
-    :param img: mandelbrot set
-    """
-    fig = plt.figure()
-    ax = fig.subplots()
-
-    ax.imshow(img)
-    ax.axis("off")
-    ax.set_title("Mandelbrot")
-
-    # Add simple zoom in tool.
-    plot_with_zoom = ZoomTool(ax, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
-    plot_with_zoom.connect()
-    plt.show()
-    plot_with_zoom.disconnect()
-
-
 if __name__ == '__main__':
     img, result = mandelbrot_set()
-    graphic_tool(img)
-    # monte_carlo_integration(result, WIDTH, HEIGHT, (RE_MIN, RE_MAX), (IM_MIN, IM_MAX))
+    mandelbrot_visualizer_tool(img)
 
