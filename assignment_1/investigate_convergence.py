@@ -18,14 +18,14 @@ def estimate_error( width, height, re, im, s, i):
     a = (re[1] - re[0]) * (im[1] - im[0])
 
     # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
-    _, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
+    est, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
 
     # Estimated error for range of iterations between 0 and i.
     x = range(i + 1)
     y = []
 
     # Compute error
-    a_is = details[-1]  # Estimation of the area of the Mandelbrot set for i iteration and s samples.
+    a_is = est  # Estimation of the area of the Mandelbrot set for i iteration and s samples.
     for j in x:  # For each number of iteration until max_i
         # Get number of samples which converge for j iteration
         count = np.sum((details >= j).astype(int))
@@ -43,7 +43,7 @@ def study_difference():
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
-    x, y = estimate_error(width=w, height=h, re=re, im=im, s=100000, i=1000)
+    x, y = estimate_error(width=w, height=h, re=re, im=im, s=50000, i=1000)
     graphic_utils.difference_plot(x, y)
 
 
