@@ -1,4 +1,6 @@
 import numpy as np
+from subprocess import Popen, PIPE
+import math
 import time
 import mandelbrot
 import chaospy
@@ -6,6 +8,21 @@ import matplotlib.pyplot as plt
 
 def pure_random(w, h, n):
 	return (np.random.uniform(0, w, n), np.random.uniform(0, h, n))    
+
+"""
+orthogonal sampling for fixed w, h, n
+sampling properties are set in the compiled c file. Yet to 
+figure out how to pass arguments, this is the next step .. 
+"""
+def orthogonal():
+	x_samples = []
+	y_samples = []
+	with Popen(['./ortho'], stdout=PIPE, bufsize=1, universal_newlines=True) as p:
+		for line in p.stdout:
+			vals = line.split()
+			x_samples.append(float(vals[0]))
+			y_samples.append(float(vals[1]))
+	return (np.array(x_samples), np.array(y_samples))
 
 """
 Performance is not good at the moment...
@@ -84,13 +101,15 @@ def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_IT
 	a = (re_max - re_min) * (im_max - im_min)
 
 	# Choose n random grid points to sample
-	n, count = 100000, 0
+	n, count = s, 0
 
 	# choose sampling method based on kwarg
 	if(method == 'halton'):
 		x_samp, y_samp = halton_sequence(w, h, n)
 	elif(method == 'latin_square'):
 		x_samp, y_samp = latin_square(w, h, n)
+	elif(method == 'orthogonal'):
+		x_samp, y_samp = orthogonal()
 	else:
 		x_samp, y_samp = pure_random(w, h, n)
 	

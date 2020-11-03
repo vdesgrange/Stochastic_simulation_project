@@ -5,7 +5,8 @@
 #include "mt19937.h"
 #include "rand_support.h"
 
-#define MAJOR	   9999
+#define RUNS     1
+#define MAJOR	   100
 #define SAMPLES    (MAJOR * MAJOR)
 
 /* We will have a total of SAMPLES samples, one in each of the MAJOR * MAJOR cells.
@@ -20,17 +21,19 @@
    This code assumes the use of the MT random generator, together with a few support
    functions in rand_support.c
 */
-long xlist[MAJOR][MAJOR] = {{0}};
-long ylist[MAJOR][MAJOR] = {{0}};
+
 
 int
 main()
 {
+    long xlist[MAJOR][MAJOR] = {{0}};
+    long ylist[MAJOR][MAJOR] = {{0}};
     int i;
     int j;
     int k;
     int m;
-    long double scale = 4.0 / ((long double) SAMPLES);
+    long double x_scale = 600 / ((long double) SAMPLES);
+    long double y_scale = 400 / ((long double) SAMPLES);
     double x;
     double y;
 
@@ -70,16 +73,16 @@ main()
                    a different column of cells (as determined by xlist[i][j]
                    The random long double value selects a random point in the minor subsquare
                  */
-                x = -2.0 + scale * (xlist[i][j] + (long double) genrand_real2());
+                x = x_scale * (xlist[i][j] + (long double) genrand_real2());
 
                 /* For a given subsquare row, every subsquare has its sample in a different 
                    row of cells */
-                y = -2.0 + scale * (ylist[j][i] + (long double) genrand_real2());
+                y = y_scale * (ylist[j][i] + (long double) genrand_real2());
 
                 /* Do the desired computation with with x and y at this point in the code */
+                printf("%lf %lf \n", x, y);
             }
         }
     }
-    /* Postprocessing */
     return 0;
 }
