@@ -1,7 +1,8 @@
 import numpy as np
 import time
 import mandelbrot
-
+import chaospy
+import matplotlib.pyplot as plt
 
 def pure_random(w, h, n):
 	return (np.random.uniform(0, w, n), np.random.uniform(0, h, n))    
@@ -58,7 +59,12 @@ def latin_square(w, h, n):
 	return (x_samples, y_samples)
 
 
-def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_ITER):
+def halton_sequence(w, h, n):
+	distribution = chaospy.J(chaospy.Uniform(0, w), chaospy.Uniform(0, h))
+	samples = distribution.sample(n, rule="halton")
+	return (samples[0], samples[1])
+
+def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_ITER, method='pure_random'):
 	"""
 	Monte-carlo integration algorithm.
 	Estimates the surface value of a complex plan.
@@ -79,8 +85,15 @@ def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_IT
 
 	# Choose n random grid points to sample
 	n, count = 100000, 0
-	x_samp, y_samp = pure_random(w, h, n)
 
+	# choose sampling method based on kwarg
+	if(method == 'halton'):
+		x_samp, y_samp = halton_sequence(w, h, n)
+	elif(method == 'latin_square'):
+		x_samp, y_samp = latin_square(w, h, n)
+	else:
+		x_samp, y_samp = pure_random(w, h, n)
+	
 	# Running time
 	start_time = time.time()
 

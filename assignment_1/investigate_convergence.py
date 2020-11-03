@@ -37,8 +37,8 @@ def estimate_error_by_iteration( width, height, re, im, s, i):
 
 def estimate_error_by_sampling( width, height, re, im, s, i):
     """
-    :param s: Number of samples
-    :param i: Maximal number of iteration
+    :param s: Maximal number of samples
+    :param i: Number of iteration
     :param width: width of the plan
     :param height: height of the plan
     :param re: tuple of (minimal, maximal) coordinates of real axis
@@ -57,13 +57,51 @@ def estimate_error_by_sampling( width, height, re, im, s, i):
     # Compute error
     a_is = est  # Estimation of the area of the Mandelbrot set for i iteration and s samples.
     for t in x:  # For an increasing number of sample j until s.
-        # Get number of samples which converge for j iteration
         count = np.sum((details[:t+1] == i).astype(int))
-        a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
+        a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for i iteration and t samples.
         y.append(abs(a_it - a_is))  # Error
-
     return x, y
 
+def estimate_error_by_sampling_method(width, height, re, im, s, i):
+    """
+    :param s: Maximum number of samples
+    :param i: Number of iteration (should be minimum  with which we have reasonable convergence)
+    :param width: width of the plan
+    :param height: height of the plan
+    :param re: tuple of (minimal, maximal) coordinates of real axis
+    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
+    """
+    # Area of the complex plane
+    a = (re[1] - re[0]) * (im[1] - im[0])
+
+    # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
+    est_rand, _, details_rand = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
+    est_halton, _, details_halton = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i, method='halton')
+
+    # Estimated error for range of iterations between 0 and i.
+    x_rand = range(1, s + 1)
+    x_halton = range(1, s + 1)
+
+    y_rand = []
+    y_halton = []
+
+    # Compute error for random
+    a_is_rand = est_rand  # Estimation of the area of the Mandelbrot set for i iteration and s samples.
+    for t in x_rand:  # For an increasing number of sample j until s.
+        # Get number of samples which converge for j iteration
+        count = np.sum((details_rand[:t+1] == i).astype(int))
+        a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
+        y_rand.append(abs(a_it - a_is_rand))  # Error
+
+    # Compute error for halton
+    a_is_halton = est_halton  # Estimation of the area of the Mandelbrot set for i iteration and s samples.
+    for t in x_halton:  # For an increasing number of sample j until s.
+        # Get number of samples which converge for j iteration
+        count = np.sum((details_halton[:t+1] == i).astype(int))
+        a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
+        y_halton.append(abs(a_it - a_is_halton))  # Error
+    
+    return x_rand, y_rand, x_halton, y_halton
 
 def study_difference_by_iteration():
     """
@@ -88,6 +126,17 @@ def study_difference_by_sampling():
     x, y = estimate_error_by_sampling(width=w, height=h, re=re, im=im, s=100000, i=1000)
     graphic_utils.difference_plot_by_sampling(x, y)
 
+def study_convergence_by_sampling_method():
+    """
+    Get difference between A_it and A_is : pure random sampling vs Halton
+    Examing which sampling method requires fewer samples to converge
+    Get abs(A_js - A_is) for all j < i, then plot the results.
+    """
+    w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
+    re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
+    im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
+    x_rand, y_rand, x_halton, y_halton = estimate_error_by_sampling_method(width=w, height=h, re=re, im=im, s=100000, i=1000)
+    graphic_utils.convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton)
 
 def convergence(c, i):
     print('c = ', c)
@@ -121,6 +170,5 @@ def study_convergence():
 
 
 if __name__ == '__main__':
-    study_difference_by_iteration()
-    study_difference_by_sampling()
-    study_convergence()
+    # study_difference_by_sampling()
+    study_convergence_by_sampling_method()
