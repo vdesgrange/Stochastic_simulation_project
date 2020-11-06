@@ -1,5 +1,11 @@
 import matplotlib.pyplot as plt
 
+# Hexadecimal colour scheme for mandelbrot visualisation
+# https://coolors.co
+palette = ['#060A0F', '#0B141E', '#111E2D', '#16283C', '#1C324A', '#213C59', '#274668', '#2C5077', '#325A86',
+           '#376495', '#3D6EA4', '#4279B3', '#4C83BD', '#5B8DC2', '#6A97C8', '#6D9AC9', '#88ACD3', '#97B7D8',
+           '#A6C1DE', '#B5CBE3', '#C3D6E9', '#D2E0EE', '#E1E4F4', '#F0F5F9', '#FFFFFF']
+
 
 def difference_plot_by_iteration(x, y):
     fig, ax = plt.subplots(dpi=300)

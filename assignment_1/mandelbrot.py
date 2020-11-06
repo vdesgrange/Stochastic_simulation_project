@@ -1,18 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageDraw
-
-# from monte_carlo import monte_carlo_integration
+from graphic_utils import palette
 
 WIDTH = 600
 HEIGHT = 400
-MAX_ITER = 700
+MAX_ITER = 100
 RE_MIN, RE_MAX = -2.02, 0.49
 IM_MIN, IM_MAX = -1.15, 1.15
-
-# colour scheme for our visualisation
-# https://coolors.co
-palette = ['#008148', '#C6C013', '#EF8A17', '#EF2917']
 
 
 class ZoomTool:
