@@ -1,7 +1,6 @@
 import numpy as np
 import time
 import mandelbrot
-import matplotlib.pyplot as plt
 
 from sampling_method import halton_sequence, latin_square, orthogonal, pure_random
 

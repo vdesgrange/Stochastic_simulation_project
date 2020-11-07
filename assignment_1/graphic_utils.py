@@ -24,6 +24,7 @@ def difference_plot_by_sampling(x, y):
     ax.loglog(x, y, color='coral', linewidth='.5')
     plt.show()
 
+
 def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton):
     fig, ax = plt.subplots(dpi=200)
     ax.set_xlabel('Number of sampling t')
@@ -35,6 +36,7 @@ def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton):
     plt.legend()
     plt.show()
 
+
 def complex_plan_plot(re, im):
     fig, ax = plt.subplots(dpi=300)
     ax.set_xlabel('Re(A[n])')
@@ -42,6 +44,7 @@ def complex_plan_plot(re, im):
     ax.set_title(r'Convergence of complex number $c \approx {:3f} + ({:3f})i$'.format(re[0], im[0]))
     ax.plot(re, im, color='lightskyblue', marker='o', linewidth='.5')
     plt.show()
+
 
 def sampling_scatter_plot(x_samples, y_samples):
     fig, ax = plt.subplots(dpi=300)

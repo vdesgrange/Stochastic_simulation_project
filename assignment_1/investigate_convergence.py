@@ -2,10 +2,12 @@ import numpy as np
 
 import mandelbrot
 import graphic_utils
+import curve_utils
 from monte_carlo import monte_carlo_integration
+from sampling_method import halton_sequence, latin_square, orthogonal, pure_random
 
 
-def estimate_error_by_iteration( width, height, re, im, s, i):
+def estimate_error_by_iteration(width, height, re, im, s, i, sampling_method):
     """
     :param s: Number of samples
     :param i: Maximal number of iteration
@@ -18,7 +20,7 @@ def estimate_error_by_iteration( width, height, re, im, s, i):
     a = (re[1] - re[0]) * (im[1] - im[0])
 
     # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
-    est, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
+    est, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i, sampling_method=sampling_method)
 
     # Estimated error for range of iterations between 0 and i.
     x = range(i + 1)
@@ -35,7 +37,7 @@ def estimate_error_by_iteration( width, height, re, im, s, i):
     return x, y
 
 
-def estimate_error_by_sampling( width, height, re, im, s, i):
+def estimate_error_by_sampling(width, height, re, im, s, i, sampling_method):
     """
     :param s: Maximal number of samples
     :param i: Number of iteration
@@ -48,7 +50,7 @@ def estimate_error_by_sampling( width, height, re, im, s, i):
     a = (re[1] - re[0]) * (im[1] - im[0])
 
     # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
-    est, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
+    est, _, details = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i, sampling_method=sampling_method)
 
     # Estimated error for range of iterations between 0 and i.
     x = range(1, s + 1)
@@ -61,6 +63,7 @@ def estimate_error_by_sampling( width, height, re, im, s, i):
         a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for i iteration and t samples.
         y.append(abs(a_it - a_is))  # Error
     return x, y
+
 
 def estimate_error_by_sampling_method(width, height, re, im, s, i):
     """
@@ -76,7 +79,7 @@ def estimate_error_by_sampling_method(width, height, re, im, s, i):
 
     # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
     est_rand, _, details_rand = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i)
-    est_halton, _, details_halton = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i, method='halton')
+    est_halton, _, details_halton = monte_carlo_integration(width=width, height=height, re=re, im=im, s=s, i=i, sampling_method=halton_sequence)
 
     # Estimated error for range of iterations between 0 and i.
     x_rand = range(1, s + 1)
@@ -103,7 +106,8 @@ def estimate_error_by_sampling_method(width, height, re, im, s, i):
     
     return x_rand, y_rand, x_halton, y_halton
 
-def study_difference_by_iteration():
+
+def study_difference_by_iteration(s, i, sampling_method=pure_random):
     """
     Get difference between A_js and A_is : number of iteration
     Get abs(A_js - A_is) for all j < i, then plot the results.
@@ -111,11 +115,12 @@ def study_difference_by_iteration():
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
-    x, y = estimate_error_by_iteration(width=w, height=h, re=re, im=im, s=50000, i=1000)
+    x, y = estimate_error_by_iteration(width=w, height=h, re=re, im=im, s=s, i=i, sampling_method=sampling_method)
     graphic_utils.difference_plot_by_iteration(x, y)
+    return x, y
 
 
-def study_difference_by_sampling():
+def study_difference_by_sampling(s, i, sampling_method=pure_random):
     """
     Get difference between A_it and A_is : number of samples
     Get abs(A_it - A_is) for all t < i, then plot the results.
@@ -123,10 +128,12 @@ def study_difference_by_sampling():
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
-    x, y = estimate_error_by_sampling(width=w, height=h, re=re, im=im, s=100000, i=1000)
+    x, y = estimate_error_by_sampling(width=w, height=h, re=re, im=im, s=s, i=i, sampling_method=sampling_method)
     graphic_utils.difference_plot_by_sampling(x, y)
+    return x, y
 
-def study_convergence_by_sampling_method():
+
+def study_convergence_by_sampling_method(s, i):
     """
     Get difference between A_it and A_is : pure random sampling vs Halton
     Examing which sampling method requires fewer samples to converge
@@ -135,8 +142,9 @@ def study_convergence_by_sampling_method():
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
-    x_rand, y_rand, x_halton, y_halton = estimate_error_by_sampling_method(width=w, height=h, re=re, im=im, s=100000, i=1000)
+    x_rand, y_rand, x_halton, y_halton = estimate_error_by_sampling_method(width=w, height=h, re=re, im=im, s=s, i=i)
     graphic_utils.convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton)
+
 
 def convergence(c, i):
     print('c = ', c)
@@ -146,7 +154,7 @@ def convergence(c, i):
     graphic_utils.complex_plan_plot(re, im)
 
 
-def study_convergence():
+def study_convergence_mandelbrot():
     """
     Study convergence of points in complex plane.
     Get a list of complex number supposed to converge, and plot evolution of the function f_c(z)
@@ -170,5 +178,18 @@ def study_convergence():
 
 
 if __name__ == '__main__':
-    # study_difference_by_sampling()
-    study_convergence_by_sampling_method()
+    # Study difference by number of iteration
+    # study_difference_by_iteration(1000, 1000)
+    # study_difference_by_iteration(10000, 1000)
+    # study_difference_by_iteration(100000, 1000)
+    #
+    # # Study difference by number of samples
+    # study_difference_by_sampling(10000, 500)
+    # study_difference_by_sampling(10000, 800)
+    # study_difference_by_sampling(10000, 1000)
+
+    # 1000, 800 ?
+    study_convergence_by_sampling_method(1000, 800)
+    study_convergence_by_sampling_method(10000, 800)
+
+    # study_convergence()
