@@ -45,8 +45,8 @@ def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_IT
 	# Proportion of sample points within the set scaled to size of complex plane
 	estimate = (count / s) * a
 
-	print("--- %s seconds ---" % (time.time() - start_time))
-	print('Estimation of mandelbrot surface is %f' % (estimate))
+	# print("--- %s seconds ---" % (time.time() - start_time))
+	# print('Estimation of mandelbrot surface is %f' % (estimate))
 
 	return estimate, samples, details
 
