@@ -25,15 +25,20 @@ def difference_plot_by_sampling(x, y):
     plt.show()
 
 
-def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton):
-    fig, ax = plt.subplots(dpi=200)
+def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs):
+    fig, ax = plt.subplots(dpi=300)
+
     ax.set_xlabel('Number of sampling t')
     ax.set_ylabel(r'$|A_{it} - A_{is}|$')
-    ax.set_title(r'Convergence Behaviour of Pure Random vs Halton Sampling')
-    ax.plot(x_rand[::500], y_rand[::500], color='coral', linewidth='.5', label='Random')
-    ax.plot(x_halton[::500], y_halton[::500], color='red', linewidth='.5', label='Halton')
+    ax.set_title(r'Convergence Behaviour by sampling method')
+
+    ax.plot(x_rand, y_rand, color='coral', linewidth='.5', label='Random')  # x_rand[::500], y_rand[::500]
+    ax.plot(x_halton, y_halton, color='orchid', linewidth='.5', label='Halton')  # x_halton[::500], y_halton[::500]
+    ax.plot(x_lhs, y_lhs, color='lightskyblue', linewidth='.5', label='LHS')  # x_lhs[::500], y_lhs[::500]
+
     plt.yscale('log')
     plt.legend()
+
     plt.show()
 
 
@@ -48,7 +53,7 @@ def complex_plan_plot(re, im):
 
 def sampling_scatter_plot(x_samples, y_samples):
     fig, ax = plt.subplots(dpi=300)
-    ax.scatter(x_samples, x_samples, color='coral', s = 0.5)
+    ax.scatter(x_samples, x_samples, color='coral', s=0.5)
     plt.title('Sampling Scatter')
     ax.set_xlabel('X Sample')
     ax.set_ylabel('Y Sample')

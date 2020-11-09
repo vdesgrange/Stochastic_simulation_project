@@ -2,22 +2,22 @@ import numpy as np
 import time
 import mandelbrot
 
-from sampling_method import halton_sequence, latin_square, orthogonal, pure_random
+from sampling_method import pure_random
 
 
-def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_ITER, sampling_method=pure_random):
+def monte_carlo_integration(re, im, w, h, s, i, sampling_method=pure_random):
 	"""
 	Monte-carlo integration algorithm.
 	Estimates the surface value of a complex plan.
-	:param grid: Numpy array(h, w) of values i in (0, 1). Within the surface is 1, outside the surface is 0.
-	:param width: width of the plan
-	:param height: height of the plan
 	:param re: tuple of minimal and maximal coordinates of real axis
 	:param im: tuple of minimal and maximal coordinates of imaginary axis.
+	:param w: width of the plan
+	:param h: height of the plan
+	:param s: Maximal number of samples
+	:param i: Number of iteration
+	:param sampling_method: sampling method used (pure random, halton sequence, etc.)
 	:return: Array of estimation of the surface in complex units.
 	"""
-	# Get grid wight and height
-	w, h = width, height
 	# Get real and imaginary minimal and maximal axis coordinates.
 	re_min, re_max = re[0], re[1]
 	im_min, im_max = im[0], im[1]
@@ -53,10 +53,10 @@ def monte_carlo_integration(width, height, re, im, s=100000, i=mandelbrot.MAX_IT
 
 if __name__ == '__main__':
 	monte_carlo_integration(
-		width=mandelbrot.WIDTH,
-		height=mandelbrot.HEIGHT,
 		re=(mandelbrot.RE_MIN, mandelbrot.RE_MAX),
 		im=(mandelbrot.IM_MIN, mandelbrot.IM_MAX),
+		w=mandelbrot.WIDTH,
+		h=mandelbrot.HEIGHT,
 		s=100000,
 		i=1000,
-		sampling_method=halton_sequence)
+		sampling_method=pure_random)
