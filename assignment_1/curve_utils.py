@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from numpy.polynomial import Polynomial
+from numpy.polynomial.polynomial import polyval
 
 def estimate(x, y):
     def func(x, a, b, c):
@@ -24,6 +25,11 @@ def estimate(x, y):
     plt.loglog(x, fd, 'b-')
     plt.show()
 
+# takes a polynomial and returns the slope at point x 
+def slope(poly, x):
+    deriv = poly.deriv()
+    return deriv(x)
+
 def estimate_polyfit(x, y, labels):
     ## x is a list of numpy arrays
     ## y is a list of numpy arrays
@@ -35,6 +41,6 @@ def estimate_polyfit(x, y, labels):
     for i in range(0, len(labels)):  
         p = Polynomial.fit(x[i], y[i], 5)
         plt.plot(*p.linspace(), label=labels[i])
-
+        print('Slope of ', labels[i], ' at 100 ', slope(p, 100))
     plt.legend()
     plt.show()

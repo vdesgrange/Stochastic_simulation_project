@@ -57,15 +57,10 @@ def latin_square_custom(w, h, n):
 
     return (x_samples, y_samples)
 
-
 def halton_sequence(w, h, n):
-    """
-    halton sequence sampling
-    """
     distribution = chaospy.J(chaospy.Uniform(0, w), chaospy.Uniform(0, h))
     samples = distribution.sample(n, rule="halton")
     return samples[0], samples[1]
-
 
 def orthogonal(w, h, n):
     """
