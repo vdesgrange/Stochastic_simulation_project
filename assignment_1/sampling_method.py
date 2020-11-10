@@ -3,7 +3,11 @@ import chaospy
 from subprocess import Popen, PIPE
 
 
-def latin_square(w, h, n):
+def latin_square_chaos(w, h, n):
+    samples = chaospy.create_latin_hypercube_samples(order=n, dim=2).round(4)
+    return samples[0] * w, samples[1] * h  
+
+def latin_square_custom(w, h, n):
     """
     Performance is not good at the moment...
     Although, I think there are some obvious improvements to be made

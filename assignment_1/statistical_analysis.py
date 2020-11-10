@@ -1,7 +1,7 @@
 import numpy as np
 
 import mandelbrot
-from statistical_analysis_utils import recursive_sample_mean, recursive_sample_variance, confidence_interval
+from statistical_analysis_utils import recursive_sample_mean, recursive_sample_variance, confidence_interval_ppf
 from monte_carlo import monte_carlo_integration
 from sampling_method import pure_random, halton_sequence
 
@@ -24,11 +24,10 @@ def confidence_interval_estimate(l, k, s, i, re, im, w, h, sampling_method=pure_
     while it < k or interval >= l:
         a, _, _ = monte_carlo_integration(re, im, w, h, s, i, sampling_method)
         x.append(a)
-
         x1_ = recursive_sample_mean(a, x0_, len(x) - 1)
         s2_ = recursive_sample_variance(s2_, x1_, x0_, len(x) - 1)
         x0_ = x1_
-        min, max, interval = confidence_interval(x1_, np.sqrt(s2_), 0.05, len(x))
+        min, max, interval = confidence_interval_ppf(x1_, np.sqrt(s2_), 0.05, len(x))
         it += 1
 
     print("Number of simulation :", it)

@@ -57,7 +57,10 @@ def sample_standard_deviation(x):
     return np.sqrt(sample_variance(x))
 
 
-def confidence_interval(x_, s_, alpha, n):
+"""
+Why are we using the inverse survival function here? 
+"""
+def confidence_interval_isf(x_, s_, alpha, n):
     """
     Compute confidence interval estimate of theta, the expected population value.
     :param x_: sample mean
@@ -66,6 +69,18 @@ def confidence_interval(x_, s_, alpha, n):
     :return: min/max/length of confidence interval estimate range
     """
     z = norm.isf(alpha / 2., 0, 1)
+
+    min = x_ - z * (s_ / np.sqrt(n))
+    max = x_ + z * (s_ / np.sqrt(n))
+    len = 2 * z * (s_ / np.sqrt(n))
+
+    return min, max, len
+
+## James' implementation
+def confidence_interval_ppf(x_, s_, alpha, n):
+
+    p = 1 - alpha
+    z = norm.ppf((p + 1) / 2.)
 
     min = x_ - z * (s_ / np.sqrt(n))
     max = x_ + z * (s_ / np.sqrt(n))

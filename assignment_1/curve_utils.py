@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-
+from numpy.polynomial import Polynomial
 
 def estimate(x, y):
     def func(x, a, b, c):
@@ -22,4 +22,19 @@ def estimate(x, y):
     fd = np.gradient(func(x, *popt))
     plt.figure()
     plt.loglog(x, fd, 'b-')
+    plt.show()
+
+def estimate_polyfit(x, y, labels):
+    ## x is a list of numpy arrays
+    ## y is a list of numpy arrays
+    ## labels is a list of strings
+    fig, ax = plt.subplots(dpi=150)
+    ax.set_xlabel('Number of Samples')
+    ax.set_ylabel(r'$|A_{it} - A_{is}|$')
+    plt.title('Polynomial Fit of Convergence')
+    for i in range(0, len(labels)):  
+        p = Polynomial.fit(x[i], y[i], 5)
+        plt.plot(*p.linspace(), label=labels[i])
+
+    plt.legend()
     plt.show()

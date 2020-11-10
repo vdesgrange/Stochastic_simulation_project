@@ -1,7 +1,7 @@
 import mandelbrot
 import investigate_convergence
 import statistical_analysis
-from sampling_method import pure_random, halton_sequence, latin_square
+from sampling_method import pure_random, halton_sequence, latin_square_chaos
 
 
 def assignment_1_main():
@@ -75,7 +75,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Latin Hypercube ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.02, 100, 1000, 800, re, im, w, h, latin_square)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.02, 100, 1000, 800, re, im, w, h, latin_square_chaos)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))

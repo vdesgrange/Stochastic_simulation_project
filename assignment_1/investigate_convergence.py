@@ -4,7 +4,7 @@ import mandelbrot
 import graphic_utils
 import curve_utils
 from monte_carlo import monte_carlo_integration
-from sampling_method import halton_sequence, latin_square, orthogonal, pure_random
+from sampling_method import halton_sequence, latin_square_chaos, orthogonal, pure_random
 
 RE = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
 IM = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
@@ -85,7 +85,7 @@ def estimate_error_by_sampling_method(re, im, w, h, s, i):
     # Estimation of the area surface of Mandelbrot set for i iterations and s samples.
     a_is_rand, _, details_rand = monte_carlo_integration(re, im, w, h, s, i, sampling_method=pure_random)
     a_is_halton, _, details_halton = monte_carlo_integration(re, im, w, h, s, i, sampling_method=halton_sequence)
-    a_is_lhs, _, details_lhs = monte_carlo_integration(re, im, w, h, s, i, sampling_method=latin_square)
+    a_is_lhs, _, details_lhs = monte_carlo_integration(re, im, w, h, s, i, sampling_method=latin_square_chaos)
 
     # Estimated error for range of iterations between 0 and i.
     x_rand = x_halton = x_lhs = range(1, s + 1)
@@ -111,6 +111,13 @@ def estimate_error_by_sampling_method(re, im, w, h, s, i):
         count = np.sum((details_lhs[:t+1] == i).astype(int))
         a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
         y_lhs.append(abs(a_it - a_is_lhs))  # Error
+
+    # Compute error for random
+    # for t in x_orth:  # For an increasing number of sample j until s.
+    #     # Get number of samples which converge for j iteration
+    #     count = np.sum((details_orth[:t+1] == i).astype(int))
+    #     a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
+    #     y_orth.append(abs(a_it - a_is_orth))  # Error
 
     return x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs
 
@@ -185,7 +192,7 @@ if __name__ == '__main__':
     # study_difference_by_sampling(10000, 1000)
 
     # 1000, 800 ?
-    study_convergence_by_sampling_method(1000, 800)
+    study_convergence_by_sampling_method(1000, 100)
     # study_convergence_by_sampling_method(10000, 800)
 
     # study_convergence_mandelbrot()
