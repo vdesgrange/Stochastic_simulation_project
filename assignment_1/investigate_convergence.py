@@ -183,8 +183,8 @@ def study_convergence_mandelbrot(re=RE, im=IM, w=WIDTH, h=HEIGHT):
 if __name__ == '__main__':
     # Study difference by number of iteration
     # study_difference_by_iteration(1000, 1000)
-    # study_difference_by_iteration(10000, 1000)
-    # study_difference_by_iteration(100000, 1000)
+    study_difference_by_iteration(10000, 1000)
+    study_difference_by_iteration(100000, 1000)
     #
     # # Study difference by number of samples
     # study_difference_by_sampling(10000, 500)
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     # study_difference_by_sampling(10000, 1000)
 
     # 1000, 800 ?
-    study_convergence_by_sampling_method(100000, 100)
+    # study_convergence_by_sampling_method(100000, 100)
     # study_convergence_by_sampling_method(10000, 800)
 
     # study_convergence_mandelbrot()

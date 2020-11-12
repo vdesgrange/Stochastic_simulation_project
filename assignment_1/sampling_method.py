@@ -1,6 +1,7 @@
 import numpy as np
 import chaospy
 from subprocess import Popen, PIPE
+import matplotlib.pyplot as plt
 
 
 def latin_square_chaos(w, h, n):
@@ -57,10 +58,13 @@ def latin_square_custom(w, h, n):
 
     return (x_samples, y_samples)
 
+# as per randomised quasi-monte carlo 
 def halton_sequence(w, h, n):
     distribution = chaospy.J(chaospy.Uniform(0, w), chaospy.Uniform(0, h))
     samples = distribution.sample(n, rule="halton")
-    return samples[0], samples[1]
+    x_samples = samples[0] + np.random.uniform(0, 1, n) 
+    y_samples = samples[1] + np.random.uniform(0, 1, n)
+    return np.clip(x_samples, 0, w), np.clip(y_samples, 0, h)
 
 def orthogonal(w, h, n):
     """

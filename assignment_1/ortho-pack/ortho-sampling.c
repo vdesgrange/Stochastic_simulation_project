@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 #include "mt19937.h"
 #include "rand_support.h"
 
@@ -37,7 +38,8 @@ main()
     double x;
     double y;
 
-    init_genrand(3737);
+    srand(time(NULL));
+    init_genrand(rand());
     m = 0;
     /* Divide the entire area into MAJOR * MAJOR sub-squares */
     /* Divide each subsquare into MAJOR * MAJOR cells */
