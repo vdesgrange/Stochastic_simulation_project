@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from curve_utils import estimate_polyfit
+from numpy.polynomial import Polynomial
+from numpy.polynomial.polynomial import polyval
 
 # Hexadecimal colour scheme for mandelbrot visualisation
 # https://coolors.co
@@ -31,15 +33,31 @@ def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton, x_lh
     ax.set_xlabel('Number of sampling t')
     ax.set_ylabel(r'$|A_{it} - A_{is}|$')
     ax.set_title(r'Convergence Behaviour by sampling method')
-    ax.plot(x_rand, y_rand, color='coral', linewidth='.5', label='Random')  # x_rand[::500], y_rand[::500]
-    ax.plot(x_halton, y_halton, color='orchid', linewidth='.5', label='Halton')  # x_halton[::500], y_halton[::500]
-    ax.plot(x_lhs, y_lhs, color='lightskyblue', linewidth='.5', label='LHS')  # x_lhs[::500], y_lhs[::500]
+    ax.scatter(x_rand, y_rand, color='coral', label='Random', s=0.5)  # x_rand[::500], y_rand[::500]
+    #ax.scatter(x_halton, y_halton, color='orchid', label='Halton', s=0.5)  # x_halton[::500], y_halton[::500]
+    #ax.scatter(x_lhs, y_lhs, color='lightskyblue', label='LHS', s=0.5)  # x_lhs[::500], y_lhs[::500]
     # ax.plot(x_orth, y_orth, color='lightskyblue', linewidth='.5', label='Orthogonal')
-    plt.yscale('log')
+
+    #x = [x_rand, x_halton, x_lhs]
+    #y = [y_rand, y_halton, y_lhs]
+    #labels=['Poly Pure Random', 'Poly Halton Sampling', 'POly Latin HyperSquare']
+    x = [x_rand]
+    y = [y_rand]
+    labels=['Poly Pure Random']
+
+    ## x is a list of numpy arrays
+    ## y is a list of numpy arrays
+    ## labels is a list of strings
+    plt.title('Polynomial Fit of Convergence')
+    for i in range(0, len(labels)):  
+        p = Polynomial.fit(x[i], y[i], 15)
+        plt.plot(*p.linspace(), label=labels[i])
+        # print('Slope of ', labels[i], ' at 100 ', slope(p, 100))
     plt.legend()
     plt.show()
+
     # estimate_polyfit([x_rand, x_halton, x_lhs, x_orth], [y_rand, y_halton, y_lhs, y_orth], labels=['Pure Random', 'Halton Sampling', 'Latin HyperSquare', 'Orthogonal'])
-    estimate_polyfit([x_rand, x_halton, x_lhs], [y_rand, y_halton, y_lhs], labels=['Pure Random', 'Halton Sampling', 'Latin HyperSquare'])
+    # estimate_polyfit([x_rand, x_halton, x_lhs], [y_rand, y_halton, y_lhs], labels=['Pure Random', 'Halton Sampling', 'Latin HyperSquare'])
 
 def complex_plan_plot(re, im):
     fig, ax = plt.subplots(dpi=150)

@@ -192,7 +192,7 @@ if __name__ == '__main__':
     # study_difference_by_sampling(10000, 1000)
 
     # 1000, 800 ?
-    study_convergence_by_sampling_method(1000, 100)
+    study_convergence_by_sampling_method(100000, 100)
     # study_convergence_by_sampling_method(10000, 800)
 
     # study_convergence_mandelbrot()

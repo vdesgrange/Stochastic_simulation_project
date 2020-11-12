@@ -41,6 +41,6 @@ def estimate_polyfit(x, y, labels):
     for i in range(0, len(labels)):  
         p = Polynomial.fit(x[i], y[i], 5)
         plt.plot(*p.linspace(), label=labels[i])
-        print('Slope of ', labels[i], ' at 100 ', slope(p, 100))
+        # print('Slope of ', labels[i], ' at 100 ', slope(p, 100))
     plt.legend()
     plt.show()

@@ -143,10 +143,10 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
 
 if __name__ == '__main__':
     study_iteration_error(1000, 1500)
-    study_iteration_error(10000, 1500)
-    study_iteration_error(50000, 1500)
+    #study_iteration_error(10000, 1500)
+    #study_iteration_error(10000, 1500)
 
-    study_samples_error(50000, 100)
-    study_samples_error(50000, 500)
-    study_samples_error(50000, 1000)
+    study_samples_error(2000, 1000)
+    #study_samples_error(10000, 500)
+   # study_samples_error(10000, 1000)
 
