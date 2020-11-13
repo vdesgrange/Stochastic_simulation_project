@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from curve_utils import estimate_polyfit
 from numpy.polynomial import Polynomial
+from curve_utils import estimate_polyfit
 from numpy.polynomial.polynomial import polyval
 
 # Hexadecimal colour scheme for mandelbrot visualisation
@@ -105,17 +105,46 @@ def plot_convergence(x, y, x_label):
 
 
 def plot_convergence_difference(x, y, xlabel):
-    max_d_r, max_d_l, max_d_h = y[0], y[1], y[2]
+    """
+    Plot relative difference between min/max of simulation set for 3 different methods at log scale.
+    :param x: values considered for variance
+    :param y: maximal difference between minimal and maximal estimated area among simulations
+    :param xlabel: Title associated to x axis
+    """
+    max_d_r, max_d_h, max_d_l = y[0], y[1], y[2]
 
     fig, ax = plt.subplots(dpi=150)
 
-    ax.set_title('Maximum difference within simulation results per number of iteration')
+    ax.set_title('Maximum difference within simulation results')
     ax.set_xlabel(xlabel)
     ax.set_ylabel('Maximum difference within a set of simulation')
 
     ax.plot(x, max_d_r, linewidth=0.5, label='Pure random')
-    ax.plot(x, max_d_l, linewidth=0.5, label='Latin Hypercube')
     ax.plot(x, max_d_h, linewidth=0.5, label='Halton sequence')
+    ax.plot(x, max_d_l, linewidth=0.5, label='Latin Hypercube')
+
+    plt.legend()
+    plt.show()
+
+
+def plot_convergence_variance(x, y, xlabel):
+    """
+    Plot variance of simulation set for 3 different methods at log scale.
+    :param x: values considered for variance
+    :param y: variance
+    :param xlabel: Title associated to x axis
+    """
+    max_d_r, max_d_h, max_d_l = y[0], y[1], y[2]
+
+    fig, ax = plt.subplots(dpi=150)
+
+    ax.set_title('Variance of simulation results')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel('Variance')
+
+    ax.loglog(x, max_d_r, linewidth=0.5, label='Pure random')
+    ax.loglog(x, max_d_h, linewidth=0.5, label='Halton sequence')
+    ax.loglog(x, max_d_l, linewidth=0.5, label='Latin hypercube')
 
     plt.legend()
     plt.show()

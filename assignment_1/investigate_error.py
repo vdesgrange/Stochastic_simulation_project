@@ -1,9 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
 import mandelbrot
 import graphic_utils
-import curve_utils
+from statistical_analysis_utils import sample_variance
 from monte_carlo import monte_carlo_integration
 from sampling_method import halton_sequence, latin_square_chaos, orthogonal, pure_random
 
@@ -113,24 +111,33 @@ def study_iteration_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
         area_stack[1][t] = np.array(y_halton)
         area_stack[2][t] = np.array(y_lhs)
 
+    print("Computing variance ...")
+    x_diff_range = range(0, i + 1, 10)
+    variance_stack = [[], [], []]
+    for j in x_diff_range:
+        variance_stack[0].append(sample_variance(area_stack[0, :, j]))
+        variance_stack[1].append(sample_variance(area_stack[1, :, j]))
+        variance_stack[2].append(sample_variance(area_stack[2, :, j]))
+
     print("Computing maximal difference...")
     x_diff_range = range(0, i + 1, 10)
     max_diff_stack = [[], [], []]
     for j in x_diff_range:
-        d_r, d_l, d_h = 0, 0, 0
+        d_r, d_h, d_l = 0, 0, 0
+
         for t in range(nb_try):
             for u in range(t + 1, nb_try):
                 d_r = max(d_r, abs(area_stack[0][t][j] - area_stack[0][u][j]) / abs(area_stack[0][t][j] + area_stack[0][u][j]))
-                d_l = max(d_l, abs(area_stack[1][t][j] - area_stack[1][u][j]) / abs(area_stack[1][t][j] + area_stack[1][u][j]))
-                d_h = max(d_h, abs(area_stack[2][t][j] - area_stack[2][u][j]) / abs(area_stack[2][t][j] + area_stack[2][u][j]))
+                d_h = max(d_h, abs(area_stack[1][t][j] - area_stack[1][u][j]) / abs(area_stack[1][t][j] + area_stack[1][u][j]))
+                d_l = max(d_l, abs(area_stack[2][t][j] - area_stack[2][u][j]) / abs(area_stack[2][t][j] + area_stack[2][u][j]))
 
         max_diff_stack[0].append(d_r)
-        max_diff_stack[1].append(d_l)
-        max_diff_stack[2].append(d_h)
-
+        max_diff_stack[1].append(d_h)
+        max_diff_stack[2].append(d_l)
 
     graphic_utils.plot_convergence(np.array(x_range), area_stack, 'Number of iteration i')
     graphic_utils.plot_convergence_difference(np.array(x_diff_range), max_diff_stack, 'Number of iteration i')
+    graphic_utils.plot_convergence_variance(np.array(x_diff_range), variance_stack, 'Number of iteration i')
 
 
 def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
@@ -150,6 +157,14 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
         area_stack[1][t] = np.array(y_halton)
         area_stack[2][t] = np.array(y_lhs)
 
+    print("Computing variance...")
+    x_diff_range = range(0, s, 50)
+    variance_stack = [[], [], []]
+    for j in x_diff_range:
+        variance_stack[0].append(sample_variance(area_stack[0, :, j]))
+        variance_stack[1].append(sample_variance(area_stack[1, :, j]))
+        variance_stack[2].append(sample_variance(area_stack[2, :, j]))
+
     print("Computing maximal difference...")
     x_diff_range = range(0, s, 50)
     max_diff_stack = [[], [], []]
@@ -167,14 +182,10 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
 
     graphic_utils.plot_convergence(np.array(x_range), area_stack, 'Number of sample s')
     graphic_utils.plot_convergence_difference(np.array(x_diff_range), max_diff_stack, 'Number of sample s')
+    graphic_utils.plot_convergence_variance(np.array(x_diff_range), variance_stack, 'Number of sample s')
 
 
 if __name__ == '__main__':
     study_iteration_error(1000, 1500)
-    # study_samples_error(10000, 1000)
-
-    # study_iteration_error(1000, 1500)
-
-    # study_samples_error(2000, 1000)
-    # study_samples_error(10000, 500)
+    study_samples_error(10000, 1000)
 
