@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 import mandelbrot
 import graphic_utils
@@ -32,7 +33,6 @@ def estimate_iteration_error(re, im, w, h, s, i):
 
     # Estimated error for range of iterations between 0 and i.
     i_range = range(i + 1)
-    x_rand = x_halton = x_lhs = i_range
     y_rand, y_halton, y_lhs = [], [], []
 
     # Compute error by samples for random, halton sequence and latin hypercube
@@ -46,11 +46,14 @@ def estimate_iteration_error(re, im, w, h, s, i):
         a_halton_js = (count_halton / s) * a
         a_lhs_js = (count_lhs / s) * a
 
-        y_rand.append(abs(a_rand_js - a_is_rand))
-        y_halton.append(abs(a_halton_js - a_is_halton))
-        y_lhs.append(abs(a_lhs_js - a_is_lhs))
+        y_rand.append(a_rand_js)
+        y_halton.append(a_halton_js)
+        y_lhs.append(a_lhs_js)
+        # y_rand.append(abs(a_rand_js - a_is_rand))
+        # y_halton.append(abs(a_halton_js - a_is_halton))
+        # y_lhs.append(abs(a_lhs_js - a_is_lhs))
 
-    return x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs
+    return i_range, y_rand, y_halton, y_lhs
 
 
 def estimate_samples_error(re, im, w, h, s, i):
@@ -72,7 +75,6 @@ def estimate_samples_error(re, im, w, h, s, i):
 
     # Estimated error for range of iterations between 0 and i.
     s_range = range(1, s + 1)
-    x_rand = x_halton = x_lhs = s_range
     y_rand, y_halton, y_lhs = [], [], []
 
     # Compute error by samples for random, halton sequence and latin hypercube
@@ -85,39 +87,14 @@ def estimate_samples_error(re, im, w, h, s, i):
         a_halton_it = (count_halton / t) * a
         a_lhs_it = (count_lhs / t) * a
 
-        y_rand.append(abs(a_rand_it - a_is_rand))
-        y_halton.append(abs(a_halton_it - a_is_halton))
-        y_lhs.append(abs(a_lhs_it - a_is_lhs))
+        y_rand.append(a_rand_it)
+        y_halton.append(a_halton_it)
+        y_lhs.append(a_lhs_it)
+        # y_rand.append(abs(a_rand_it - a_is_rand))
+        # y_halton.append(abs(a_halton_it - a_is_halton))
+        # y_lhs.append(abs(a_lhs_it - a_is_lhs))
 
-    # # Compute error for random
-    # for t in x_rand:  # For an increasing number of sample j until s.
-    #     # Get number of samples which converge for j iteration
-    #     count = np.sum((details_rand[:t+1] == i).astype(int))
-    #     a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
-    #     y_rand.append(abs(a_it - a_is_rand))  # Error
-    #
-    # # Compute error for halton
-    # for t in x_halton:  # For an increasing number of sample j until s.
-    #     # Get number of samples which converge for j iteration
-    #     count = np.sum((details_halton[:t+1] == i).astype(int))
-    #     a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
-    #     y_halton.append(abs(a_it - a_is_halton))  # Error
-    #
-    # # Compute error for Latin hypercube sampling
-    # for t in x_lhs:  # For an increasing number of sample j until s.
-    #     # Get number of samples which converge for j iteration
-    #     count = np.sum((details_lhs[:t+1] == i).astype(int))
-    #     a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
-    #     y_lhs.append(abs(a_it - a_is_lhs))  # Error
-
-    # Compute error for random
-    # for t in x_orth:  # For an increasing number of sample j until s.
-    #     # Get number of samples which converge for j iteration
-    #     count = np.sum((details_orth[:t+1] == i).astype(int))
-    #     a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for j iteration and s samples.
-    #     y_orth.append(abs(a_it - a_is_orth))  # Error
-
-    return x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs
+    return s_range, y_rand, y_halton, y_lhs
 
 
 def study_iteration_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
@@ -126,8 +103,34 @@ def study_iteration_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     Examing which sampling method requires fewer samples to converge
     Get abs(A_js - A_is) for all j < i, then plot the results.
     """
-    x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs = estimate_iteration_error(re, im, w, h, s, i)
-    graphic_utils.convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs)
+    nb_try = 100
+    area_stack = np.zeros((3, nb_try, i + 1))
+
+    print("Estimating area...")
+    for t in range(nb_try):
+        x_range, y_rand, y_halton, y_lhs = estimate_iteration_error(re, im, w, h, s, i)
+        area_stack[0][t] = np.array(y_rand)
+        area_stack[1][t] = np.array(y_halton)
+        area_stack[2][t] = np.array(y_lhs)
+
+    print("Computing maximal difference...")
+    x_diff_range = range(0, i + 1, 10)
+    max_diff_stack = [[], [], []]
+    for j in x_diff_range:
+        d_r, d_l, d_h = 0, 0, 0
+        for t in range(nb_try):
+            for u in range(t + 1, nb_try):
+                d_r = max(d_r, abs(area_stack[0][t][j] - area_stack[0][u][j]) / abs(area_stack[0][t][j] + area_stack[0][u][j]))
+                d_l = max(d_l, abs(area_stack[1][t][j] - area_stack[1][u][j]) / abs(area_stack[1][t][j] + area_stack[1][u][j]))
+                d_h = max(d_h, abs(area_stack[2][t][j] - area_stack[2][u][j]) / abs(area_stack[2][t][j] + area_stack[2][u][j]))
+
+        max_diff_stack[0].append(d_r)
+        max_diff_stack[1].append(d_l)
+        max_diff_stack[2].append(d_h)
+
+
+    graphic_utils.plot_convergence(np.array(x_range), area_stack, 'Number of iteration i')
+    graphic_utils.plot_convergence_difference(np.array(x_diff_range), max_diff_stack, 'Number of iteration i')
 
 
 def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
@@ -137,16 +140,41 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     Examine which sampling method requires fewer samples to converge
     Get abs(A_it - A_is) for all t < s, then plot the results.
     """
-    x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs = estimate_samples_error(re, im, w, h, s, i)
-    graphic_utils.convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs)
+    nb_try = 100
+    area_stack = np.zeros((3, nb_try, s))
+
+    print("Estimating area...")
+    for t in range(nb_try):
+        x_range, y_rand, y_halton, y_lhs = estimate_samples_error(re, im, w, h, s, i)
+        area_stack[0][t] = np.array(y_rand)
+        area_stack[1][t] = np.array(y_halton)
+        area_stack[2][t] = np.array(y_lhs)
+
+    print("Computing maximal difference...")
+    x_diff_range = range(0, s, 50)
+    max_diff_stack = [[], [], []]
+    for j in x_diff_range:
+        d_r, d_l, d_h = 0, 0, 0
+        for t in range(nb_try):
+            for u in range(t + 1, nb_try):
+                d_r = max(d_r, abs(area_stack[0][t][j] - area_stack[0][u][j]) / abs(area_stack[0][t][j] + area_stack[0][u][j]))
+                d_l = max(d_l, abs(area_stack[1][t][j] - area_stack[1][u][j]) / abs(area_stack[1][t][j] + area_stack[1][u][j]))
+                d_h = max(d_h, abs(area_stack[2][t][j] - area_stack[2][u][j]) / abs(area_stack[2][t][j] + area_stack[2][u][j]))
+
+        max_diff_stack[0].append(d_r)
+        max_diff_stack[1].append(d_l)
+        max_diff_stack[2].append(d_h)
+
+    graphic_utils.plot_convergence(np.array(x_range), area_stack, 'Number of sample s')
+    graphic_utils.plot_convergence_difference(np.array(x_diff_range), max_diff_stack, 'Number of sample s')
 
 
 if __name__ == '__main__':
     study_iteration_error(1000, 1500)
-    #study_iteration_error(10000, 1500)
-    #study_iteration_error(10000, 1500)
+    # study_samples_error(10000, 1000)
 
-    study_samples_error(2000, 1000)
-    #study_samples_error(10000, 500)
-   # study_samples_error(10000, 1000)
+    # study_iteration_error(1000, 1500)
+
+    # study_samples_error(2000, 1000)
+    # study_samples_error(10000, 500)
 

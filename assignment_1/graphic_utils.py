@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 from curve_utils import estimate_polyfit
 from numpy.polynomial import Polynomial
@@ -74,4 +75,47 @@ def sampling_scatter_plot(x_samples, y_samples):
     plt.title('Sampling Scatter')
     ax.set_xlabel('X Sample')
     ax.set_ylabel('Y Sample')
+    plt.show()
+
+
+def plot_convergence(x, y, x_label):
+    area_stack_rand, area_stack_halton, area_stack_lhs = y[0], y[1], y[2]
+    nb_simulation, nb_area = np.shape(area_stack_rand)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, dpi=150)
+
+    for t in range(nb_simulation):
+        rand_idx = np.random.randint(low=0, high=nb_area, size=50)
+        ax1.scatter(x[rand_idx], area_stack_rand[t][rand_idx], s=0.5)
+        ax2.scatter(x[rand_idx], area_stack_halton[t][rand_idx], s=0.5)
+        ax3.scatter(x[rand_idx], area_stack_lhs[t][rand_idx], s=0.5)
+
+    ax1.set_title('Pure random')
+    ax2.set_title('Halton sequence')
+    ax3.set_title('Latin hypercube')
+
+    ax2.set_xlabel(x_label)
+    ax1.set_ylabel('Area of Mandelbrot set')
+
+    ax1.set_ylim(1, 2)
+    ax2.set_ylim(1, 2)
+    ax3.set_ylim(1, 2)
+
+    plt.show()
+
+
+def plot_convergence_difference(x, y, xlabel):
+    max_d_r, max_d_l, max_d_h = y[0], y[1], y[2]
+
+    fig, ax = plt.subplots(dpi=150)
+
+    ax.set_title('Maximum difference within simulation results per number of iteration')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel('Maximum difference within a set of simulation')
+
+    ax.plot(x, max_d_r, linewidth=0.5, label='Pure random')
+    ax.plot(x, max_d_l, linewidth=0.5, label='Latin Hypercube')
+    ax.plot(x, max_d_h, linewidth=0.5, label='Halton sequence')
+
+    plt.legend()
     plt.show()
