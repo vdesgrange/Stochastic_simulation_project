@@ -62,20 +62,41 @@ def assignment_1_main():
     print("=== 3 - Compare sampling method and accuracy ===")
     print("================================================")
 
-    print("=== Preview of convergence by sampling method ===")
-    investigate_convergence.study_convergence_by_sampling_method(1000, 800, re, im, w, h)
+    ## the fixed number of simulation
+    sims = 50
+
+    print("=== Study confidence interval by sampling method, Fixed Simulations ===")
+    print("=== Pure random, Simulations = {0} ===".format(sims))
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 2500, 600, re, im, w, h, pure_random)
+    print("Sample mean     x_  = ", x_)
+    print("Sample variance s2_ = ", s2_)
+    print("Confidence interval [{:5f}, {:5f}] ".format(min, max))
     print("Done")
 
-    print("=== Study confidence interval by sampling method ===")
+    print("=== Latin Hypercube, Simulations = {0} ===".format(sims))
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 2500, 600, re, im, w, h, latin_square_chaos)
+    print("Sample mean     x_  = ", x_)
+    print("Sample variance s2_ = ", s2_)
+    print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
+    print("Done")
+
+    print("=== Orthogonal Sampling, Simulations = {0} ===".format(sims))
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 2500, 600, re, im, w, h, orthogonal)
+    print("Sample mean     x_  = ", x_)
+    print("Sample variance s2_ = ", s2_)
+    print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
+
+
+    print("=== Study confidence interval by sampling method, When to Stop Algorithm ===")
     print("=== Pure random ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 30, 10000, 800, re, im, w, h, pure_random)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(30, 10000, 800, re, im, w, h, pure_random)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval [{:5f}, {:5f}] ".format(min, max))
     print("Done")
 
     print("=== Latin Hypercube ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 30, 10000, 800, re, im, w, h, latin_square_chaos)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(30, 10000, 800, re, im, w, h, latin_square_chaos)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
@@ -86,8 +107,6 @@ def assignment_1_main():
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
-
-    print("Done")
 
     print("===================================================")
     print("=== 4 - Improve convergence rate of Monte-Carlo ===")

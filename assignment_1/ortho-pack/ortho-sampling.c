@@ -7,7 +7,7 @@
 #include "rand_support.h"
 
 #define RUNS     1
-#define MAJOR	   100
+#define MAJOR	   50
 #define SAMPLES    (MAJOR * MAJOR)
 
 /* We will have a total of SAMPLES samples, one in each of the MAJOR * MAJOR cells.
