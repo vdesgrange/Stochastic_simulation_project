@@ -79,7 +79,6 @@ def orthogonal(w, h, n):
             vals = line.split()
             x_samples.append(float(vals[0]))
             y_samples.append(float(vals[1]))
-
     return np.array(x_samples), np.array(y_samples)
 
 

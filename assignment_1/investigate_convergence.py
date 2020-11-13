@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 import mandelbrot
 import graphic_utils
 import curve_utils
@@ -126,11 +126,27 @@ def study_difference_by_iteration(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, samplin
     """
     Get difference between A_js and A_is : number of iteration
     Get abs(A_js - A_is) for all j < i, then plot the results.
+    params:
+    i: max iterations to be tested
     """
     x, y = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method)
     graphic_utils.difference_plot_by_iteration(x, y)
     return x, y
 
+def study_difference_by_iteration_q3(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    """
+    Get difference between A_js and A_is : number of iteration
+    Get abs(A_js - A_is) for all j < i, then plot the results.
+    params:
+    i: max iterations to be tested
+    """
+
+    x_rand, y_rand = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=pure_random)
+    x_lhs, y_lhs = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=latin_square_chaos)
+    x_orth, y_orth = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=orthogonal)
+    graphic_utils.difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth)
+
+    return x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth
 
 def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=pure_random):
     """
@@ -183,8 +199,8 @@ def study_convergence_mandelbrot(re=RE, im=IM, w=WIDTH, h=HEIGHT):
 if __name__ == '__main__':
     # Study difference by number of iteration
     # study_difference_by_iteration(1000, 1000)
-    study_difference_by_iteration(10000, 1000)
-    study_difference_by_iteration(100000, 1000)
+    study_difference_by_iteration_q3(10000, 500)
+    #study_difference_by_iteration(100000, 1000)
     #
     # # Study difference by number of samples
     # study_difference_by_sampling(10000, 500)

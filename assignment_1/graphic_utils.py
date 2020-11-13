@@ -18,6 +18,18 @@ def difference_plot_by_iteration(x, y):
     ax.loglog(x, y, color='coral', linewidth='.5')
     plt.show()
 
+def difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth):
+    fig, ax = plt.subplots(dpi=130)
+    ax.set_xlabel('Number of iterations j', fontsize=15)
+    ax.set_ylabel(r'$|A_{js} - A_{is}|$', fontsize=17)
+    ax.set_title(r'Evolution of $|A_{js} - A_{is}|,\ \forall j < i$', fontsize=15)
+    ax.plot(x_rand, y_rand, color='coral', label='Pure Random')
+    ax.plot(x_lhs, y_lhs, color='seagreen', label='LHS')
+    ax.plot(x_orth, y_orth, color='hotpink', label='Orthogonal')
+    plt.yscale('log')
+    plt.legend(fontsize=15)
+    plt.tick_params(labelsize=15)
+    plt.show()
 
 def difference_plot_by_sampling(x, y):
     fig, ax = plt.subplots(dpi=150)
