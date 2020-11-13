@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sampling_method as sm
 from numpy.polynomial import Polynomial
 from curve_utils import estimate_polyfit
 from numpy.polynomial.polynomial import polyval
@@ -160,3 +161,24 @@ def plot_convergence_variance(x, y, xlabel):
 
     plt.legend()
     plt.show()
+
+def example_sample(n):
+
+    x_rand, y_rand = sm.pure_random(600, 400, 1000)
+    x_hal, y_hal = sm.halton_sequence(600, 400, 1000)
+
+    fig, ax = plt.subplots(dpi=130)
+    ax.set_xlabel('Grid Width', fontsize=15)
+    ax.set_ylabel('Grid Height', fontsize=15)
+    ax.set_title('Pure Random Sampling', fontsize=15)
+    plt.scatter(x_rand, y_rand, color='coral', s = 1)
+    plt.show()
+
+    fig, ax = plt.subplots(dpi=130)
+    ax.set_xlabel('Grid Width', fontsize=15)
+    ax.set_ylabel('Grid Height', fontsize=15)
+    ax.set_title('Quasi-Random Halton Sampling', fontsize=15)
+    plt.scatter(x_hal, y_hal, color='coral', s = 1)
+    plt.show()
+
+

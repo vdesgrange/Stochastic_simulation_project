@@ -9,7 +9,7 @@ def assignment_1_main():
     print("=== 1 - Visualize Mandelbrot set ===")
     print("====================================")
 
-    # Get mandelbrot set
+    Get mandelbrot set
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
@@ -62,7 +62,7 @@ def assignment_1_main():
     print("=== 3 - Compare sampling method and accuracy ===")
     print("================================================")
 
-    ## the fixed number of simulation
+    # the fixed number of simulation
     sims = 50
 
     print("=== Study confidence interval by sampling method, Fixed Simulations ===")
@@ -113,7 +113,7 @@ def assignment_1_main():
     print("===================================================")
 
     print("=== Halton Sequence ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 40, 10000, 800, re, im, w, h, halton_sequence)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 30, 10000, 800, re, im, w, h, halton_sequence)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))

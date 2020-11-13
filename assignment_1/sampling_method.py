@@ -64,6 +64,7 @@ def halton_sequence(w, h, n):
     samples = distribution.sample(n, rule="halton")
     x_samples = samples[0] + np.random.uniform(0, 1, n) 
     y_samples = samples[1] + np.random.uniform(0, 1, n)
+
     return np.clip(x_samples, 0, w), np.clip(y_samples, 0, h)
 
 def orthogonal(w, h, n):
