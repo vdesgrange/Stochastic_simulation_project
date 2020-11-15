@@ -119,20 +119,22 @@ def sampling_scatter_plot(x_samples, y_samples):
 
 
 def plot_convergence(x, y, x_label):
-    area_stack_rand, area_stack_halton, area_stack_lhs = y[0], y[1], y[2]
+    area_stack_rand, area_stack_halton, area_stack_lhs, area_stack_orth  = y[0], y[1], y[2], y[3]
     nb_simulation, nb_area = np.shape(area_stack_rand)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, dpi=150)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, dpi=150)
 
     for t in range(nb_simulation):
         rand_idx = np.random.randint(low=0, high=nb_area, size=50)
         ax1.scatter(x[rand_idx], area_stack_rand[t][rand_idx], s=0.5)
         ax2.scatter(x[rand_idx], area_stack_halton[t][rand_idx], s=0.5)
         ax3.scatter(x[rand_idx], area_stack_lhs[t][rand_idx], s=0.5)
+        ax4.scatter(x[rand_idx], area_stack_orth[t][rand_idx], s=0.5)
 
     ax1.set_title('Pure random')
     ax2.set_title('Halton sequence')
     ax3.set_title('Latin hypercube')
+    ax4.set_title('Orthogonal')
 
     ax2.set_xlabel(x_label)
     ax1.set_ylabel('Area of Mandelbrot set')
@@ -140,6 +142,7 @@ def plot_convergence(x, y, x_label):
     ax1.set_ylim(1, 2)
     ax2.set_ylim(1, 2)
     ax3.set_ylim(1, 2)
+    ax4.set_ylim(1, 2)
 
     plt.show()
 
@@ -151,7 +154,7 @@ def plot_convergence_difference(x, y, xlabel):
     :param y: maximal difference between minimal and maximal estimated area among simulations
     :param xlabel: Title associated to x axis
     """
-    max_d_r, max_d_h, max_d_l = y[0], y[1], y[2]
+    max_d_r, max_d_h, max_d_l, max_d_o = y[0], y[1], y[2], y[3]
 
     fig, ax = plt.subplots(dpi=150)
 
@@ -162,6 +165,7 @@ def plot_convergence_difference(x, y, xlabel):
     ax.plot(x, max_d_r, linewidth=0.5, label='Pure random')
     ax.plot(x, max_d_h, linewidth=0.5, label='Halton sequence')
     ax.plot(x, max_d_l, linewidth=0.5, label='Latin Hypercube')
+    ax.plot(x, max_d_o, linewidth=0.5, label='Orthogonal')
 
     plt.legend()
     plt.show()
@@ -174,7 +178,7 @@ def plot_convergence_variance(x, y, xlabel):
     :param y: variance
     :param xlabel: Title associated to x axis
     """
-    max_d_r, max_d_h, max_d_l = y[0], y[1], y[2]
+    max_d_r, max_d_h, max_d_l, max_d_o = y[0], y[1], y[2], y[3]
 
     fig, ax = plt.subplots(dpi=150)
 
@@ -185,6 +189,7 @@ def plot_convergence_variance(x, y, xlabel):
     ax.loglog(x, max_d_r, linewidth=0.5, label='Pure random')
     ax.loglog(x, max_d_h, linewidth=0.5, label='Halton sequence')
     ax.loglog(x, max_d_l, linewidth=0.5, label='Latin hypercube')
+    ax.loglog(x, max_d_o, linewidth=0.5, label='Orthogonal')
 
     plt.legend()
     plt.show()
