@@ -34,8 +34,10 @@ class ZoomTool:
         ydata = event.ydata
 
         # Convert to image coordinates to complex coordinates
-        x = re[0] + (xdata / w) * (re[1] - re[0])
-        y = im[0] + (ydata / h) * (im[1] - im[0])
+        # x = re[0] + (xdata / w) * (re[1] - re[0])
+        # y = im[0] + (ydata / h) * (im[1] - im[0])
+        x = xdata
+        y = ydata
 
         # Get x-, y-axis range. Divided by 2 to center clicked point.
         cur_xrange = (re[1] - re[0])*.5
@@ -52,7 +54,7 @@ class ZoomTool:
 
         # Compute new fractal and refresh plot
         new_img = mandelbrot_set(self.re, self.im)
-        self.ax.imshow(new_img)
+        self.ax.imshow(new_img, extent=[re_min, re_max, im_min, im_max])  # 
         self.ax.figure.canvas.draw_idle()
 
     def disconnect(self):
@@ -67,8 +69,8 @@ def mandelbrot_visualizer_tool(img):
     fig = plt.figure()
     ax = fig.subplots()
 
-    ax.imshow(img)
-    ax.axis("off")
+    ax.imshow(img, extent=(RE_MIN, RE_MAX, IM_MIN, IM_MAX))  #
+    # ax.axis("off")
     ax.set_title("Mandelbrot")
 
     # Add simple zoom in tool.
