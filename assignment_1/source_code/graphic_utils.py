@@ -33,6 +33,33 @@ def difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth
     plt.tick_params(labelsize=15)
     plt.show()
 
+def difference_plot_by_iteration_q4(x_lhs, y_lhs, x_hal, y_hal):
+    fig, ax = plt.subplots(dpi=130)
+    ax.set_xlabel('Number of iterations j', fontsize=15)
+    ax.set_ylabel(r'$|A_{js} - A_{is}|$', fontsize=17)
+    ax.set_title(r'Evolution of $|A_{js} - A_{is}|,\ \forall j < i$', fontsize=15)
+    ax.plot(x_lhs, y_lhs, color='seagreen', label='Random MC')
+    ax.plot(x_hal, y_hal, color='coral', label='Randomised Quasi-MC')
+    plt.yscale('log')
+    plt.legend(fontsize=15)
+    plt.tick_params(labelsize=15)
+    plt.savefig('iterations_q4', dpi=150, bbox_inches = "tight")
+    plt.show()
+
+def difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal):
+    fig, ax = plt.subplots(dpi=130, sharex=True, squeeze=True)
+    ax.set_xlabel('Number of sampling t', fontsize=15)
+    ax.set_ylabel(r'$|A_{it} - A_{is}|$', fontsize=17)
+    ax.set_title(r'Evolution of $|A_{it} - A_{is}|,\ \forall t < s$', fontsize=15)
+    ax.plot(list(x_lhs[200:]), y_lhs[200:], color='seagreen', label='Random MC')
+    ax.plot(list(x_hal[200:]), y_hal[200:], color='coral', label='Randomised Quasi-MC')
+    plt.legend(fontsize=15)
+    plt.tick_params(labelsize=15)
+    x_ticks = ax.xaxis.get_major_ticks()
+    x_ticks[0].label1.set_visible(False)
+    plt.savefig('sampling_q4', dpi=150, bbox_inches = "tight")
+    plt.show()
+
 
 def difference_plot_by_sampling(x, y):
     fig, ax = plt.subplots(dpi=150)

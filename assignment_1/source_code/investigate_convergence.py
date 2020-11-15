@@ -4,6 +4,7 @@ import graphic_utils
 from statistical_analysis_utils import sample_mean
 from monte_carlo import monte_carlo_integration
 from sampling_method import halton_sequence, latin_square_chaos, orthogonal, pure_random
+import random
 
 RE = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
 IM = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
@@ -116,12 +117,34 @@ def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling
     return x, y
 
 
+def study_convergence_iteration_qausi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    x_lhs, y_lhs = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=latin_square_chaos)
+    x_hal, y_hal = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=halton_sequence)
+
+    graphic_utils.difference_plot_by_iteration_q4(x_lhs, y_lhs, x_hal, y_hal)
+    return  x_lhs, y_lhs, x_hal, y_hal
+
+def study_convergence_samples_qausi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    x_lhs, y_lhs = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method=latin_square_chaos)
+    x_hal, y_hal = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method=halton_sequence)
+
+    graphic_utils.difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal)
+    return  x_lhs, y_lhs, x_hal, y_hal
+
 
 if __name__ == '__main__':
     # Study difference by number of iteration
-    # study_difference_by_iteration(1000, 1000)
-    # study_difference_by_iteration_q3(1000, 500)
+    # study_difference_by_iteration_q3(10000, 5000)
     #study_difference_by_iteration(100000, 1000)
-
     # # Study difference by number of samples
-    # study_difference_by_sampling(100000, 800)
+    # study_difference_by_sampling(10000, 500)
+    # study_difference_by_sampling(10000, 800)
+    # study_difference_by_sampling(10000, 1000)
+
+    # study_convergence_by_sampling_method(100000, 100)
+    # study_convergence_by_sampling_method(10000, 800)
+    # study_convergence_mandelbrot()
+    
+    ### Q4 Randomised Quasi-MC vs MC Graphs
+    #study_convergence_iteration_qausi_normal(10000, 3000)
+    study_convergence_samples_qausi_normal(10000, 3000)
