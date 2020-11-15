@@ -1,15 +1,17 @@
 import mandelbrot
 import investigate_convergence
 import statistical_analysis
+import statistical_analysis_utils
 from sampling_method import pure_random, halton_sequence, latin_square_chaos, orthogonal
-
+import numpy as np
+from scipy import stats
 
 def assignment_1_main():
     print("====================================")
     print("=== 1 - Visualize Mandelbrot set ===")
     print("====================================")
 
-    Get mandelbrot set
+    # Get mandelbrot set
     w, h = mandelbrot.WIDTH, mandelbrot.HEIGHT
     re = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
     im = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
@@ -62,7 +64,7 @@ def assignment_1_main():
     print("=== 3 - Compare sampling method and accuracy ===")
     print("================================================")
 
-    # the fixed number of simulation
+    the fixed number of simulation
     sims = 50
 
     print("=== Study confidence interval by sampling method, Fixed Simulations ===")
@@ -81,7 +83,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Orthogonal Sampling, Simulations = {0} ===".format(sims))
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 2500, 600, re, im, w, h, orthogonal)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 10000, 1000, re, im, w, h, orthogonal)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
@@ -89,21 +91,24 @@ def assignment_1_main():
 
     print("=== Study confidence interval by sampling method, When to Stop Algorithm ===")
     print("=== Pure random ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
+    print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval [{:5f}, {:5f}] ".format(min, max))
     print("Done")
 
     print("=== Latin Hypercube ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
+    print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
     print("Done")
 
     print("=== Orthogonal Sampling ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, orthogonal)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal)
+    print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
@@ -112,11 +117,45 @@ def assignment_1_main():
     print("=== 4 - Improve convergence rate of Monte-Carlo ===")
     print("===================================================")
 
-    print("=== Halton Sequence ===")
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate(0.008, 30, 10000, 800, re, im, w, h, halton_sequence)
+    print("=== Halton Sampling, Fixed Simulations, Simulations = {0} ===".format(sims))
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 10000, 1000, re, im, w, h, halton_sequence)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
+
+    print("================================================")
+    print("=== 4 - Convergence Test ===")
+    print("================================================")
+
+    runs = 30
+
+    res_orth = []
+    for j in range(0, runs):    
+        print("=== Orthogonal Sampling ===")
+        x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.0025, 50, 2500, 700, re, im, w, h, orthogonal)
+        res_orth.append(it) 
+        print('Iterations it = ', it)
+        print("Sample mean     x_  = ", x_)
+        print("Sample variance s2_ = ", s2_)
+        print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
+
+    print('Mean Iterations Required Orthogonal', np.mean(np.array(res_orth)))
+    print('Variance Iterations Required Orthogonal', statistical_analysis_utils.sample_variance(np.array(res_orth)))
+
+    res_hal = []
+    for j in range(0, runs):    
+        print("=== Halton Sequence ===, When to Stop Algorithm")
+        x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.0025, 50, 2500, 700, re, im, w, h, halton_sequence)
+        res_hal.append(it)
+        print('Iterations it = ', it)
+        print("Sample mean     x_  = ", x_)
+        print("Sample variance s2_ = ", s2_)
+        print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
+
+    print('Mean Iterations Required Halton', np.mean(np.array(res_hal)))
+    print('Variance Iterations Required Halton', statistical_analysis_utils.sample_variance(np.array(res_hal)))
+
+    print(stats.ttest_ind(np.array(res_orth), np.array(res_hal), equal_var = False))
 
 
 if __name__ == '__main__':
