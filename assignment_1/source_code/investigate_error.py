@@ -1,7 +1,7 @@
 import numpy as np
 import mandelbrot
 import graphic_utils
-from statistical_analysis_utils import sample_variance
+from statistical_analysis_utils import sample_variance, sample_mean
 from monte_carlo import monte_carlo_integration
 from sampling_method import halton_sequence, latin_square_chaos, orthogonal_native, pure_random
 
@@ -163,6 +163,7 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     nb_try = 100
     area_stack = np.zeros((4, nb_try, s))
 
+
     print("Estimating area...")
     for t in range(nb_try):
         x_range, y_rand, y_halton, y_lhs, y_orth = estimate_samples_error(re, im, w, h, s, i)
@@ -170,6 +171,20 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
         area_stack[1][t] = np.array(y_halton)
         area_stack[2][t] = np.array(y_lhs)
         area_stack[3][t] = np.array(y_orth)
+
+        # relative_error_stack[0][t] = 100 * (abs(area_stack[0][t] - area_stack[0][t][-1]) / abs(area_stack[0][t][-1]))
+        # relative_error_stack[1][t] = 100 * (abs(area_stack[1][t] - area_stack[1][t][-1]) / abs(area_stack[0][t][-1]))
+        # relative_error_stack[2][t] = 100 * (abs(area_stack[2][t] - area_stack[2][t][-1]) / abs(area_stack[0][t][-1]))
+
+    # print("Compute difference relative error...")
+    # x_diff_range = range(0, s, 50)
+    # sample_mean_error = [[], [], []]
+    # for j in x_diff_range:
+    #     sample_mean_error[0].append(sample_mean(relative_error_stack[0, :, j]))
+    #     sample_mean_error[1].append(sample_mean(relative_error_stack[1, :, j]))
+    #     sample_mean_error[2].append(sample_mean(relative_error_stack[2, :, j]))
+    #
+    # graphic_utils.difference_plot_by_sampling(x_diff_range, sample_mean_error[0])
 
     print("Computing variance...")
     x_diff_range = range(0, s, 50)
@@ -203,6 +218,7 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
 
 
 if __name__ == '__main__':
-    #study_iteration_error(1000, 1500)
     study_samples_error(5000, 1000)
+    study_iteration_error(1000, 1500)
+
 

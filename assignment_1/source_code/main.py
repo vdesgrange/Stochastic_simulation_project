@@ -2,6 +2,8 @@ import mandelbrot
 import investigate_convergence
 import statistical_analysis
 import statistical_analysis_utils
+import study_mandelbrot
+
 from sampling_method import pure_random, halton_sequence, latin_square_chaos, orthogonal
 import numpy as np
 from scipy import stats
@@ -24,8 +26,8 @@ def assignment_1_main():
     print("=== Visualize area of the Mandelbrot set ===")
     # Example 1
     print("Zoom into section (-0.58 < re < -0.56 and -0.57 < im < -0.55)")
-    re_area_1 = (-0.5829980107526879, -0.557898010752688)  # Pre-determined coordinates using Zoom-in tool.
-    im_area_1 = (-0.5752179435483872, -0.5522179435483873)
+    re_area_1 = (-0.6370549551120017, -0.3860549551120018)  # Pre-determined coordinates using Zoom-in tool.
+    im_area_1 = (0.4692717684999561, 0.6992717684999561)
     img2 = mandelbrot.mandelbrot_set(re_area_1, im_area_1, 100)
     mandelbrot.mandelbrot_visualizer_tool(img2)
     print("Done")
@@ -43,7 +45,7 @@ def assignment_1_main():
     print("===================================")
 
     print("=== Study convergence of mandelbrot set in complex plan")
-    investigate_convergence.study_convergence_mandelbrot(re, im, w, h)
+    study_mandelbrot.study_convergence_mandelbrot(re, im, w, h)
     print("Done")
 
     print("=== Evolution of difference by number of iterations and sampling ===")
@@ -64,7 +66,7 @@ def assignment_1_main():
     print("=== 3 - Compare sampling method and accuracy ===")
     print("================================================")
 
-    the fixed number of simulation
+    # the fixed number of simulation
     sims = 50
 
     print("=== Study confidence interval by sampling method, Fixed Simulations ===")

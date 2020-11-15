@@ -60,12 +60,14 @@ def difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal):
     plt.savefig('sampling_q4', dpi=150, bbox_inches = "tight")
     plt.show()
 
+
 def difference_plot_by_sampling(x, y):
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Number of sampling t')
     ax.set_ylabel(r'$|A_{it} - A_{is}|$')
     ax.set_title(r'Evolution of $|A_{it} - A_{is}|,\ \forall t < s$')
     ax.loglog(x, y, color='coral', linewidth='.5')
+    ax.loglog(x, np.true_divide(100, np.sqrt(x)), color='black', linestyle='dashed', linewidth='.5')
     plt.show()
 
 
