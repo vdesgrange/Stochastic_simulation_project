@@ -163,7 +163,7 @@ def mandelbrot_set(re=(RE_MIN, RE_MAX), im=(IM_MIN, IM_MAX), max_iter=MAX_ITER, 
 
             # Determine if there's divergence with c.
             n = mandelbrot(c, max_iter)
-            draw.point([x, y], fill=get_color(n))
+            draw.point([x, h-y], fill=get_color(n))  # Draw from top to bottom, so we must revert y axis.
     return img
 
 
