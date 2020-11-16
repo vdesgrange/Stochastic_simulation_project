@@ -11,9 +11,10 @@ WIDTH = mandelbrot.WIDTH
 HEIGHT = mandelbrot.HEIGHT
 
 
-def estimate_iteration_error(re, im, w, h, s, i):
+def estimate_iteration_area_per_method(re, im, w, h, s, i):
     """
-
+    Compute an approximation of mandelbrot set area by maximal number of iteration
+    for 4 sampling methods: pure random, halton sequence, latin square, orthogonal
     :param re: tuple of (minimal, maximal) coordinates of real axis
     :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
     :param w: width of the plan
@@ -51,15 +52,14 @@ def estimate_iteration_error(re, im, w, h, s, i):
         y_halton.append(a_halton_js)
         y_lhs.append(a_lhs_js)
         y_orth.append(a_orth_js)
-        # y_rand.append(abs(a_rand_js - a_is_rand))
-        # y_halton.append(abs(a_halton_js - a_is_halton))
-        # y_lhs.append(abs(a_lhs_js - a_is_lhs))
 
     return i_range, y_rand, y_halton, y_lhs, y_orth
 
 
-def estimate_samples_error(re, im, w, h, s, i):
+def estimate_samples_area_per_method(re, im, w, h, s, i):
     """
+    Compute an approximation of mandelbrot set area by number of samples in complex plan
+    for 4 sampling methods: pure random, halton sequence, latin square, orthogonal
     :param re: tuple of (minimal, maximal) coordinates of real axis
     :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
     :param w: width of the plan
@@ -97,25 +97,22 @@ def estimate_samples_error(re, im, w, h, s, i):
         y_halton.append(a_halton_it)
         y_lhs.append(a_lhs_it)
         y_orth.append(a_orth_it)
-        # y_rand.append(abs(a_rand_it - a_is_rand))
-        # y_halton.append(abs(a_halton_it - a_is_halton))
-        # y_lhs.append(abs(a_lhs_it - a_is_lhs))
 
     return s_range, y_rand, y_halton, y_lhs, y_orth
 
 
-def study_iteration_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+def study_iteration_convergence(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     """
-    Get difference between A_js and A_is
-    Examing which sampling method requires fewer samples to converge
+    Examine which sampling method requires fewer samples to converge.
     Get abs(A_js - A_is) for all j < i, then plot the results.
+    Study area, variance and maximal difference.
     """
-    nb_try = 100
+    nb_try = 50
     area_stack = np.zeros((4, nb_try, i + 1))
 
     print("Estimating area...")
     for t in range(nb_try):
-        x_range, y_rand, y_halton, y_lhs, y_orth = estimate_iteration_error(re, im, w, h, s, i)
+        x_range, y_rand, y_halton, y_lhs, y_orth = estimate_iteration_area_per_method(re, im, w, h, s, i)
         area_stack[0][t] = np.array(y_rand)
         area_stack[1][t] = np.array(y_halton)
         area_stack[2][t] = np.array(y_lhs)
@@ -153,12 +150,11 @@ def study_iteration_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     graphic_utils.plot_convergence_variance(np.array(x_diff_range), variance_stack, 'Number of iteration i')
 
 
-def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+def study_samples_convergence(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     """
-    Get difference between A_it and A_is with different sampling method
-    pure random, halton, latin hypercube, etc.
-    Examine which sampling method requires fewer samples to converge
+    Examine which sampling method requires fewer samples to converge.
     Get abs(A_it - A_is) for all t < s, then plot the results.
+    Study area, variance and maximal difference.
     """
     nb_try = 100
     area_stack = np.zeros((4, nb_try, s))
@@ -166,25 +162,11 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
 
     print("Estimating area...")
     for t in range(nb_try):
-        x_range, y_rand, y_halton, y_lhs, y_orth = estimate_samples_error(re, im, w, h, s, i)
+        x_range, y_rand, y_halton, y_lhs, y_orth = estimate_samples_area_per_method(re, im, w, h, s, i)
         area_stack[0][t] = np.array(y_rand)
         area_stack[1][t] = np.array(y_halton)
         area_stack[2][t] = np.array(y_lhs)
         area_stack[3][t] = np.array(y_orth)
-
-        # relative_error_stack[0][t] = 100 * (abs(area_stack[0][t] - area_stack[0][t][-1]) / abs(area_stack[0][t][-1]))
-        # relative_error_stack[1][t] = 100 * (abs(area_stack[1][t] - area_stack[1][t][-1]) / abs(area_stack[0][t][-1]))
-        # relative_error_stack[2][t] = 100 * (abs(area_stack[2][t] - area_stack[2][t][-1]) / abs(area_stack[0][t][-1]))
-
-    # print("Compute difference relative error...")
-    # x_diff_range = range(0, s, 50)
-    # sample_mean_error = [[], [], []]
-    # for j in x_diff_range:
-    #     sample_mean_error[0].append(sample_mean(relative_error_stack[0, :, j]))
-    #     sample_mean_error[1].append(sample_mean(relative_error_stack[1, :, j]))
-    #     sample_mean_error[2].append(sample_mean(relative_error_stack[2, :, j]))
-    #
-    # graphic_utils.difference_plot_by_sampling(x_diff_range, sample_mean_error[0])
 
     print("Computing variance...")
     x_diff_range = range(0, s, 50)
@@ -210,15 +192,66 @@ def study_samples_error(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
         max_diff_stack[0].append(d_r)
         max_diff_stack[1].append(d_l)
         max_diff_stack[2].append(d_h)
-        max_diff_stack[3].append(d_o) 
+        max_diff_stack[3].append(d_o)
 
     graphic_utils.plot_convergence(np.array(x_range), area_stack, 'Number of sample s')
     graphic_utils.plot_convergence_difference(np.array(x_diff_range), max_diff_stack, 'Number of sample s')
     graphic_utils.plot_convergence_variance(np.array(x_diff_range), variance_stack, 'Number of sample s')
 
 
-if __name__ == '__main__':
-    study_samples_error(5000, 1000)
-    study_iteration_error(1000, 1500)
+def study_iteration_convergence_single_method(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    """
+    Get difference between A_js and A_is
+    Examing which sampling method requires fewer samples to converge
+    Get abs(A_js - A_is) for all j < i, then plot the results.
+    """
+    nb_try = 50
+    area_stack = np.zeros((nb_try, i + 1))
 
+    print("Estimating area...")
+    for t in range(nb_try):
+        a = (re[1] - re[0]) * (im[1] - im[0])
+        a_is_rand, _, details_rand = monte_carlo_integration(re, im, w, h, s, i, sampling_method=pure_random)
+        i_range = range(i + 1)
+        y_rand = []
+        for j in i_range:
+            count_rand = np.sum((details_rand >= j).astype(int))
+            a_rand_js = (count_rand / s) * a
+            y_rand.append(a_rand_js)
+
+        area_stack[t] = np.array(y_rand)
+
+    graphic_utils.plot_convergence_single_method(np.array(i_range), area_stack, 'Maximal number of iterations i')
+
+
+def study_samples_convergence_single_method(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    """
+    Get difference between A_js and A_is
+    Examing which sampling method requires fewer samples to converge
+    Get abs(A_js - A_is) for all j < i, then plot the results.
+    """
+    nb_try = 50
+    area_stack = np.zeros((nb_try, s))
+    a = (re[1] - re[0]) * (im[1] - im[0])
+
+    print("Estimating area...")
+    for tr in range(nb_try):
+        a_is_rand, _, details_rand = monte_carlo_integration(re, im, w, h, s, i, sampling_method=pure_random)
+        s_range = range(1, s + 1)
+        y_rand = []
+        for t in s_range:
+            count_rand = np.sum((details_rand[:t+1] == i).astype(int))
+            a_rand_it = (count_rand / t) * a
+            y_rand.append(a_rand_it)
+
+        area_stack[tr] = np.array(y_rand)
+
+    graphic_utils.plot_convergence_single_method(np.array(s_range), area_stack, 'Number of samples s')
+
+
+if __name__ == '__main__':
+    # study_iteration_convergence_single_method(5000, 10000)
+    study_samples_convergence_single_method(100, 100)
+    # study_samples_convergence(5000, 1000)
+    # study_iteration_convergence(1000, 1500)
 

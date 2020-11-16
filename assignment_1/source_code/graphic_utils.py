@@ -14,11 +14,25 @@ palette = ['#060A0F', '#0B141E', '#111E2D', '#16283C', '#1C324A', '#213C59', '#2
 
 def difference_plot_by_iteration(x, y):
     fig, ax = plt.subplots(dpi=150)
-    ax.set_xlabel('Number of iterations j')
-    ax.set_ylabel(r'$|A_{js} - A_{is}|$')
-    ax.set_title(r'Evolution of $|A_{js} - A_{is}|,\ \forall j < i$')
-    ax.loglog(x, y, color='coral', linewidth='.5')
+    ax.set_xlabel('Maximal number of iterations j')
+    ax.set_ylabel(r'$100 \cdot \frac{|A_{js} - A_{is}|}{|A_{is}|}$')
+    ax.set_title(r'Evolution of relative error (%)')
+    ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
+    ax.loglog(x, np.true_divide(100, x), color='black', linestyle='dashed', linewidth='.5', label='Expected')
+    plt.legend()
     plt.show()
+
+
+def difference_plot_by_sampling(x, y):
+    fig, ax = plt.subplots(dpi=150)
+    ax.set_xlabel('Number of sampling t')
+    ax.set_ylabel(r'$100 \cdot \frac{|A_{it} - A_{is}|}{|A_{is}|}$')
+    ax.set_title(r'Evolution of relative error (%)')
+    ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
+    ax.loglog(x, np.true_divide(100, np.sqrt(x)), color='black', linestyle='dashed', linewidth='.5', label='Expected')
+    plt.legend()
+    plt.show()
+
 
 def difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth):
     fig, ax = plt.subplots(dpi=130)
@@ -58,16 +72,6 @@ def difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal):
     x_ticks = ax.xaxis.get_major_ticks()
     x_ticks[0].label1.set_visible(False)
     plt.savefig('sampling_q4', dpi=150, bbox_inches = "tight")
-    plt.show()
-
-
-def difference_plot_by_sampling(x, y):
-    fig, ax = plt.subplots(dpi=150)
-    ax.set_xlabel('Number of sampling t')
-    ax.set_ylabel(r'$|A_{it} - A_{is}|$')
-    ax.set_title(r'Evolution of $|A_{it} - A_{is}|,\ \forall t < s$')
-    ax.loglog(x, y, color='coral', linewidth='.5')
-    ax.loglog(x, np.true_divide(100, np.sqrt(x)), color='black', linestyle='dashed', linewidth='.5')
     plt.show()
 
 
@@ -117,6 +121,21 @@ def sampling_scatter_plot(x_samples, y_samples):
     plt.title('Sampling Scatter')
     ax.set_xlabel('X Sample')
     ax.set_ylabel('Y Sample')
+    plt.show()
+
+
+def plot_convergence_single_method(x, y, x_label):
+    fig, ax = plt.subplots(1, 1, dpi=150)
+
+    nb_simulation, nb_area = np.shape(y)
+    for t in range(nb_simulation):
+        rand_idx = np.random.randint(low=0, high=nb_area, size=50)
+        ax.scatter(x[rand_idx], y[t][rand_idx], s=0.5)
+
+    ax.set_title('Pure random sampling')
+    ax.set_xlabel(x_label)
+    ax.set_ylabel('Area of Mandelbrot set')
+    ax.set_ylim(1, 2)
     plt.show()
 
 
