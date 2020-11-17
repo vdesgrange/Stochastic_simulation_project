@@ -45,7 +45,8 @@ def assignment_1_main():
     print("===================================")
 
     print("=== Study convergence of mandelbrot set in complex plan")
-    study_mandelbrot.study_convergence_mandelbrot(re, im, w, h)
+    study_mandelbrot.example_convergence()
+    # study_mandelbrot.study_convergence_mandelbrot(re, im, w, h)  # For random examples
     print("Done")
 
     print("=== Evolution of difference by number of iterations and sampling ===")
@@ -93,7 +94,7 @@ def assignment_1_main():
 
     print("=== Study confidence interval by sampling method, When to Stop Algorithm ===")
     print("=== Pure random ===")
-    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
+    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -101,7 +102,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Latin Hypercube ===")
-    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
+    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -109,7 +110,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Orthogonal Sampling ===")
-    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal)
+    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)

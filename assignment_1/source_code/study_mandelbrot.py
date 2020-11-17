@@ -28,7 +28,7 @@ def study_convergence_mandelbrot(re=RE, im=IM, w=WIDTH, h=HEIGHT):
     _, complex_sample, details = monte_carlo_integration(re, im, w, h, 200, max_i)
 
     # Index of a sample of complex number which converge for at least max_i iterations.
-    idx = np.random.choice(np.argwhere(details == max_i)[:, 0], 5)
+    idx = np.random.choice(np.argwhere(details == max_i)[:, 0], 20)
 
     # Sample of complex numbers which converge for at least max_i iterations.
     sample = np.array(complex_sample)[idx]
@@ -37,5 +37,17 @@ def study_convergence_mandelbrot(re=RE, im=IM, w=WIDTH, h=HEIGHT):
         convergence(val, max_i)
 
 
+def example_convergence():
+    c1 = complex(-0.075255, -0.223533)
+    convergence(c1, 1000)
+
+    c2 = complex(0.328161, -0.310280)
+    convergence(c2, 1000)
+
+    c3 = complex(-0.695456, -0.287956)
+    convergence(c3, 1000)
+
+
 if __name__ == '__main__':
     study_convergence_mandelbrot()
+    example_convergence()
