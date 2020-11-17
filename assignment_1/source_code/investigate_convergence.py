@@ -3,7 +3,7 @@ import mandelbrot
 import graphic_utils
 from statistical_analysis_utils import sample_mean, recursive_sample_mean
 from monte_carlo import monte_carlo_integration
-from sampling_method import halton_sequence, latin_square_chaos, orthogonal, pure_random
+from sampling_method import halton_sequence, pure_random
 
 RE = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
 IM = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)

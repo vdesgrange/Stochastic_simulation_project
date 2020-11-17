@@ -2,7 +2,7 @@ import numpy as np
 import time
 import mandelbrot
 
-from sampling_method import pure_random, latin_square_chaos, latin_square_custom
+from sampling_method import pure_random, latin_square_chaos
 
 
 def monte_carlo_integration(re, im, w, h, s, i, sampling_method=pure_random):
@@ -60,12 +60,3 @@ if __name__ == '__main__':
 		s=100000,
 		i=1000,
 		sampling_method=latin_square_chaos)
-
-	monte_carlo_integration(
-		re=(mandelbrot.RE_MIN, mandelbrot.RE_MAX),
-		im=(mandelbrot.IM_MIN, mandelbrot.IM_MAX),
-		w=mandelbrot.WIDTH,
-		h=mandelbrot.HEIGHT,
-		s=100000,
-		i=1000,
-		sampling_method=latin_square_custom)

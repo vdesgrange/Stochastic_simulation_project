@@ -82,6 +82,7 @@ def orthogonal(w, h, n):
             y_samples.append(float(vals[1]))
     return np.array(x_samples), np.array(y_samples)
 
+
 def orthogonal_native(w, h, n):
     MAJOR = 5
     SAMPLES = MAJOR **2

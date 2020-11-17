@@ -4,7 +4,7 @@ import statistical_analysis
 import statistical_analysis_utils
 import study_mandelbrot
 
-from sampling_method import pure_random, halton_sequence, latin_square_chaos, orthogonal
+from sampling_method import pure_random, halton_sequence, latin_square_chaos, orthogonal_native
 import numpy as np
 from scipy import stats
 
@@ -86,7 +86,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Orthogonal Sampling, Simulations = {0} ===".format(sims))
-    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 10000, 1000, re, im, w, h, orthogonal)
+    x_, s2_, min, max = statistical_analysis.confidence_interval_estimate_fixed(sims, 10000, 1000, re, im, w, h, orthogonal_native)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
     print("Confidence interval = [{:5f}, {:5f}]".format(min, max))
@@ -110,7 +110,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Orthogonal Sampling ===")
-    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal)
+    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal_native)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -135,7 +135,7 @@ def assignment_1_main():
     res_orth = []
     for j in range(0, runs):    
         print("=== Orthogonal Sampling ===")
-        x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.0025, 50, 2500, 700, re, im, w, h, orthogonal)
+        x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.0025, 50, 2500, 700, re, im, w, h, orthogonal_native)
         res_orth.append(it) 
         print('Iterations it = ', it)
         print("Sample mean     x_  = ", x_)
