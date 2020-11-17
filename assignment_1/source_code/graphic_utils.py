@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sampling_method as sm
-from numpy.polynomial import Polynomial
-from curve_utils import estimate_polyfit
-from numpy.polynomial.polynomial import polyval
 
 # Hexadecimal colour scheme for mandelbrot visualisation
 # https://coolors.co
@@ -13,6 +10,14 @@ palette = ['#060A0F', '#0B141E', '#111E2D', '#16283C', '#1C324A', '#213C59', '#2
 
 
 def difference_plot_by_iteration(x, y, y_expected=None):
+    """
+    Visualize the convergence of a sampling method.
+    We plot the relative error (in percent) of mandelbrot set area value computed against
+    the more accurate estimation, based on the maximal number of iterations.
+    :param x: Maximal number of iteration set to estimate mandelbrot set area
+    :param y: Relative error in percent: 100 * |A_js - Ais|/|A_is|
+    :param y_expected:  Expected convergence: (1 / N) for pure random
+    """
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Maximal number of iterations j')
     ax.set_ylabel(r'$100 \cdot \frac{|A_{js} - A_{is}|}{|A_{is}|}$')
@@ -25,6 +30,14 @@ def difference_plot_by_iteration(x, y, y_expected=None):
 
 
 def difference_plot_by_sampling(x, y, y_expected=None):
+    """
+    Visualize the convergence of a sampling method.
+    We plot the relative error (in percent) of mandelbrot set area value computed against
+    the more accurate estimation, based on the number of samples used.
+    :param x: Number of samples used to estimate mandelbrot set area
+    :param y: Relative error in percent: 100 * |A_it - Ais|/|A_is|
+    :param y_expected:  Expected convergence: 1 / sqrt(N) for pure random; 1/N for halton sequence
+    """
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Number of sampling t')
     ax.set_ylabel(r'$100 \cdot \frac{|A_{it} - A_{is}|}{|A_{is}|}$')
@@ -38,6 +51,15 @@ def difference_plot_by_sampling(x, y, y_expected=None):
 
 
 def difference_plot_by_sampling_q4(x1, y1, x2, y2):
+    """
+    Visualize the convergence of two sampling method: pure random and halton sequence sampling.
+    We plot the relative errors (in percent) of mandelbrot set area value computed against
+    the more accurate estimation, based on the number of samples used.
+    :param x1: Number of samples used for pure random
+    :param y1: Relative error in percent for pure random
+    :param x2: Number of samples used for halton sequence
+    :param y2: Relative error in percent for halton sequence
+    """
     fig, ax = plt.subplots(dpi=150, sharex=True, squeeze=True)
 
     ax.set_xlabel('Number of sampling t')
@@ -54,38 +76,12 @@ def difference_plot_by_sampling_q4(x1, y1, x2, y2):
     plt.show()
 
 
-def convergence_plot_by_sampling_method(x_rand, y_rand, x_halton, y_halton, x_lhs, y_lhs):
-    fig, ax = plt.subplots(dpi=150)
-    ax.set_xlabel('Number of sampling t')
-    ax.set_ylabel(r'$|A_{it} - A_{is}|$')
-    ax.set_title(r'Convergence Behaviour by sampling method')
-    ax.scatter(x_rand, y_rand, color='coral', label='Random', s=0.5)  # x_rand[::500], y_rand[::500]
-    #ax.scatter(x_halton, y_halton, color='orchid', label='Halton', s=0.5)  # x_halton[::500], y_halton[::500]
-    #ax.scatter(x_lhs, y_lhs, color='lightskyblue', label='LHS', s=0.5)  # x_lhs[::500], y_lhs[::500]
-    # ax.plot(x_orth, y_orth, color='lightskyblue', linewidth='.5', label='Orthogonal')
-
-    #x = [x_rand, x_halton, x_lhs]
-    #y = [y_rand, y_halton, y_lhs]
-    #labels=['Poly Pure Random', 'Poly Halton Sampling', 'POly Latin HyperSquare']
-    x = [x_rand]
-    y = [y_rand]
-    labels=['Poly Pure Random']
-
-    ## x is a list of numpy arrays
-    ## y is a list of numpy arrays
-    ## labels is a list of strings
-    plt.title('Polynomial Fit of Convergence')
-    for i in range(0, len(labels)):  
-        p = Polynomial.fit(x[i], y[i], 15)
-        plt.plot(*p.linspace(), label=labels[i])
-        # print('Slope of ', labels[i], ' at 100 ', slope(p, 100))
-    plt.legend()
-    plt.show()
-
-    # estimate_polyfit([x_rand, x_halton, x_lhs, x_orth], [y_rand, y_halton, y_lhs, y_orth], labels=['Pure Random', 'Halton Sampling', 'Latin HyperSquare', 'Orthogonal'])
-    # estimate_polyfit([x_rand, x_halton, x_lhs], [y_rand, y_halton, y_lhs], labels=['Pure Random', 'Halton Sampling', 'Latin HyperSquare'])
-
 def complex_plan_plot(re, im):
+    """
+    Plot the convergence of a value in the complex plan.
+    :param re: array of real part
+    :param im: array of imaginary part
+    """
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Re')
     ax.set_ylabel('Im')
@@ -94,19 +90,18 @@ def complex_plan_plot(re, im):
     plt.show()
 
 
-def sampling_scatter_plot(x_samples, y_samples):
-    fig, ax = plt.subplots(dpi=150)
-    ax.scatter(x_samples, x_samples, color='coral', s=0.5)
-    plt.title('Sampling Scatter')
-    ax.set_xlabel('X Sample')
-    ax.set_ylabel('Y Sample')
-    plt.show()
-
-
 def plot_convergence_single_method(x, y, x_label):
+    """
+    Plot estimation of Mandelbrot set area from a set of simulations for 1 method at log scale.
+    Based on the number of samples or maximal number of iterations.
+    :param x: Number of samples or maximal number of iteration
+    :param y: Array of area estimated for a number of sample/iterations.
+    :param x_label: Label associated to x axis
+    """
     fig, ax = plt.subplots(1, 1, dpi=150)
 
     nb_simulation, nb_area = np.shape(y)
+    
     for t in range(nb_simulation):
         rand_idx = np.random.randint(low=0, high=nb_area, size=50)
         ax.scatter(x[rand_idx], y[t][rand_idx], s=0.5)
@@ -119,6 +114,14 @@ def plot_convergence_single_method(x, y, x_label):
 
 
 def plot_convergence(x, y, x_label):
+    """
+    Plot estimation of Mandelbrot set area from a set of simulations for 4 different methods at log scale.
+    Based on the number of samples or maximal number of iterations.
+    Pure random, Latin Square, Orthogonal, Halton sequence
+    :param x: Number of samples or maximal number of iteration
+    :param y: Array of area estimated for a number of sample/iterations for each methods.
+    :param x_label: Label associated to x axis
+    """
     area_stack_rand, area_stack_halton, area_stack_lhs, area_stack_orth  = y[0], y[1], y[2], y[3]
     nb_simulation, nb_area = np.shape(area_stack_rand)
 
@@ -194,8 +197,11 @@ def plot_convergence_variance(x, y, xlabel):
     plt.legend()
     plt.show()
 
-def example_sample(n):
 
+def example_sample():
+    """
+    Plot distribution of sampling methods (pure random, halton sequence sampling) in a grid.
+    """
     x_rand, y_rand = sm.pure_random(600, 400, 1000)
     x_hal, y_hal = sm.halton_sequence(600, 400, 1000)
 
