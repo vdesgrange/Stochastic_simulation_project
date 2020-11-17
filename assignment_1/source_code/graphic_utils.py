@@ -16,9 +16,9 @@ def difference_plot_by_iteration(x, y, y_expected=None):
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Maximal number of iterations j')
     ax.set_ylabel(r'$100 \cdot \frac{|A_{js} - A_{is}|}{|A_{is}|}$')
-    ax.set_title(r'Evolution of relative error (%)')
+    ax.set_title('Evolution of relative error (%)')
     ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
-    if y_expected:
+    if y_expected is not None:
         ax.loglog(x, y_expected, color='black', linestyle='dashed', linewidth='.5', label='Expected')
     plt.legend()
     plt.show()
@@ -30,51 +30,27 @@ def difference_plot_by_sampling(x, y, y_expected=None):
     ax.set_ylabel(r'$100 \cdot \frac{|A_{it} - A_{is}|}{|A_{is}|}$')
     ax.set_title(r'Evolution of relative error (%)')
     ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
-    if y_expected:
+    if y_expected is not None:
         ax.loglog(x, y_expected, color='black', linestyle='dashed', linewidth='.5', label='Expected')
 
     plt.legend()
     plt.show()
 
 
-def difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth):
-    fig, ax = plt.subplots(dpi=130)
-    ax.set_xlabel('Number of iterations j', fontsize=15)
-    ax.set_ylabel(r'$|A_{js} - A_{is}|$', fontsize=17)
-    ax.set_title(r'Evolution of $|A_{js} - A_{is}|,\ \forall j < i$', fontsize=15)
-    ax.plot(x_rand, y_rand, color='coral', label='Pure Random')
-    ax.plot(x_lhs, y_lhs, color='seagreen', label='LHS')
-    ax.plot(x_orth, y_orth, color='hotpink', label='Orthogonal')
-    plt.yscale('log')
-    plt.legend(fontsize=15)
-    plt.tick_params(labelsize=15)
-    plt.show()
+def difference_plot_by_sampling_q4(x1, y1, x2, y2):
+    fig, ax = plt.subplots(dpi=150, sharex=True, squeeze=True)
 
-def difference_plot_by_iteration_q4(x_lhs, y_lhs, x_hal, y_hal):
-    fig, ax = plt.subplots(dpi=130)
-    ax.set_xlabel('Number of iterations j', fontsize=15)
-    ax.set_ylabel(r'$|A_{js} - A_{is}|$', fontsize=17)
-    ax.set_title(r'Evolution of $|A_{js} - A_{is}|,\ \forall j < i$', fontsize=15)
-    ax.plot(x_lhs, y_lhs, color='seagreen', label='Random MC')
-    ax.plot(x_hal, y_hal, color='coral', label='Randomised Quasi-MC')
-    plt.yscale('log')
-    plt.legend(fontsize=15)
-    plt.tick_params(labelsize=15)
-    plt.savefig('iterations_q4', dpi=150, bbox_inches = "tight")
-    plt.show()
+    ax.set_xlabel('Number of sampling t')
+    ax.set_ylabel(r'$100 \cdot \frac{|A_{it} - A_{is}|}{|A_{is}|}$')
+    ax.set_title('Evolution of relative error (%)')
 
-def difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal):
-    fig, ax = plt.subplots(dpi=130, sharex=True, squeeze=True)
-    ax.set_xlabel('Number of sampling t', fontsize=15)
-    ax.set_ylabel(r'$|A_{it} - A_{is}|$', fontsize=17)
-    ax.set_title(r'Evolution of $|A_{it} - A_{is}|,\ \forall t < s$', fontsize=15)
-    ax.plot(list(x_lhs[200:]), y_lhs[200:], color='seagreen', label='Random MC')
-    ax.plot(list(x_hal[200:]), y_hal[200:], color='coral', label='Randomised Quasi-MC')
-    plt.legend(fontsize=15)
-    plt.tick_params(labelsize=15)
-    x_ticks = ax.xaxis.get_major_ticks()
-    x_ticks[0].label1.set_visible(False)
-    plt.savefig('sampling_q4', dpi=150, bbox_inches = "tight")
+    ax.loglog(x1, y1, color='seagreen', linewidth='.5', label='Random MC')
+    ax.loglog(x1, np.true_divide(100, np.sqrt(x1)), color='black', linestyle='dashed', linewidth='.5')
+
+    ax.loglog(x2, y2, color='coral', linewidth='.5',label='Randomised Quasi-MC')
+    ax.loglog(x2, np.true_divide(100, x2), color='black', linestyle='dashed', linewidth='.5')
+
+    plt.legend()
     plt.show()
 
 

@@ -4,7 +4,6 @@ import graphic_utils
 from statistical_analysis_utils import sample_mean, recursive_sample_mean
 from monte_carlo import monte_carlo_integration
 from sampling_method import halton_sequence, latin_square_chaos, orthogonal, pure_random
-import random
 
 RE = (mandelbrot.RE_MIN, mandelbrot.RE_MAX)
 IM = (mandelbrot.IM_MIN, mandelbrot.IM_MAX)
@@ -70,27 +69,6 @@ def estimate_error_by_sampling(re, im, w, h, s, i, sampling_method):
     return x, y, a_is
 
 
-def study_difference_by_iteration_q3(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
-    """
-    Get difference between A_js and A_is : number of iteration
-    Get abs(A_js - A_is) for all j < i, then plot the results.
-    params:
-    :param s: Maximal number of samples
-    :param i: Number of iteration
-    :param re: tuple of (minimal, maximal) coordinates of real axis
-    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
-    :param w: width of the plan
-    :param h: height of the plan
-    """
-
-    x_rand, y_rand, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=pure_random)
-    x_lhs, y_lhs, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=latin_square_chaos)
-    x_orth, y_orth, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=orthogonal)
-    graphic_utils.difference_plot_by_iteration_q3(x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth)
-
-    return x_rand, y_rand, x_lhs, y_lhs, x_orth, y_orth
-
-
 def study_difference_by_iteration(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=pure_random):
     """
     Get difference between A_js and A_is : number of iteration
@@ -125,7 +103,7 @@ def study_difference_by_iteration(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, samplin
     return i_range, sample_mean_error
 
 
-def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=halton_sequence):
+def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=pure_random):
     """
     Get difference between A_it and A_is : number of samples
     Get abs(A_it - A_is) for all t < i, then plot the results.
@@ -161,38 +139,29 @@ def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling
     return s_range, sample_mean_error
 
 
-def study_convergence_iteration_qausi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
-    x_lhs, y_lhs, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=latin_square_chaos)
-    x_hal, y_hal, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=halton_sequence)
+def study_convergence_samples_quasi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
+    """
+    Study convergence of Randomized quasi-monte carlo method :
+    plot relative error of pure random sampling vs halton-sequence sampling
+    :param s: Maximal number of samples
+    :param i: Number of iteration
+    :param re: tuple of (minimal, maximal) coordinates of real axis
+    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
+    :param w: width of the plan
+    :param h: height of the plan
+    :param sampling_method: sampling method used by monte-carlo
+    """
+    x_rand, y_rand = study_difference_by_sampling(s, i, re, im, w, h, sampling_method=pure_random)
+    x_hal, y_hal = study_difference_by_sampling(s, i, re, im, w, h, sampling_method=halton_sequence)
 
-    graphic_utils.difference_plot_by_iteration_q4(x_lhs, y_lhs, x_hal, y_hal)
-    return x_lhs, y_lhs, x_hal, y_hal
-
-
-def study_convergence_samples_qausi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
-    x_lhs, y_lhs = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method=latin_square_chaos)
-    x_hal, y_hal = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method=halton_sequence)
-
-    graphic_utils.difference_plot_by_sampling_q4(x_lhs, y_lhs, x_hal, y_hal)
-    return x_lhs, y_lhs, x_hal, y_hal
+    graphic_utils.difference_plot_by_sampling_q4(x_rand, y_rand, x_hal, y_hal)
+    return x_rand, y_rand, x_hal, y_hal
 
 
 if __name__ == '__main__':
-    # Q2
-    # study_difference_by_iteration(5000, 20000)
-    study_difference_by_sampling(1000, 1000)
-
-    # study_difference_by_sampling(10000, 500)
-    # study_difference_by_sampling(10000, 800)
-    # study_difference_by_sampling(10000, 1000)
-
-    # Study difference by number of iteration
-    # study_difference_by_iteration_q3(10000, 5000)
-
-    # study_convergence_by_sampling_method(100000, 100)
-    # study_convergence_by_sampling_method(10000, 800)
-    # study_convergence_mandelbrot()
+    # Q2 Convergence of MC
+    # study_difference_by_iteration(1000, 1000)  # Report: 5000, 20000
+    # study_difference_by_sampling(1000, 1000)  # Report: 100000, 1000
     
-    ### Q4 Randomised Quasi-MC vs MC Graphs
-    #study_convergence_iteration_qausi_normal(10000, 3000)
-    # study_convergence_samples_qausi_normal(10000, 3000)
+    # Q4 Randomised Quasi-MC vs MC
+    study_convergence_samples_quasi_normal(5000, 800)  # Report: 5000, 800
