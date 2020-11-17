@@ -34,8 +34,8 @@ def assignment_1_main():
 
     # Example 2
     print("Zoom into section (-0.12 < re < -0.09 and -0.93 < im < -0.91)")
-    re_area_2 = (-0.1181925672043013, -0.09309256720430129)  # Pre-determined coordinates using Zoom-in tool.
-    im_area_2 = (-0.93586814516129, -0.9128681451612901)
+    re_area_2 = (-0.783461796536797, -0.7583617965367971)  # Pre-determined coordinates using Zoom-in tool.
+    im_area_2 = (0.10449567099567116, 0.12749567099567116)
     img3 = mandelbrot.mandelbrot_set(re_area_2, im_area_2, 100)
     mandelbrot.mandelbrot_visualizer_tool(img3)
     print("Done")
@@ -50,16 +50,16 @@ def assignment_1_main():
 
     print("=== Evolution of difference by number of iterations and sampling ===")
     print("Pure random sampling method")
-    print("Evolution of difference from 0 to 1000 iteration with [10^3, 10^4, 10^5] random points")
+    print("Evolution of difference from 0 to 1000 iteration with 10^4 random points")
+    print("(note: smaller value from report to accelerate computing time)")
 
-    investigate_convergence.study_difference_by_iteration(1000, 1500, re, im, w, h)
-    investigate_convergence.study_difference_by_iteration(50000, 1500, re, im, w, h)
+    investigate_convergence.study_difference_by_iteration(1000, 1000, re, im, w, h)  # In report s=5000, i=10000
 
     print("Done")
 
     print("Evolution of difference from 0 to 10^4 random pints with [500, 800, 1000] iterations")
-    investigate_convergence.study_difference_by_sampling(10000, 800, re, im, w, h)
-    investigate_convergence.study_difference_by_sampling(10000, 1000, re, im, w, h)
+    print("(note: smaller value from report to accelerate computing time)")
+    investigate_convergence.study_difference_by_sampling(1000, 1000, re, im, w, h) # In report s=50000, i=1000
     print("Done")
 
     print("================================================")

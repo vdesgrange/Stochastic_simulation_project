@@ -12,24 +12,27 @@ palette = ['#060A0F', '#0B141E', '#111E2D', '#16283C', '#1C324A', '#213C59', '#2
            '#A6C1DE', '#B5CBE3', '#C3D6E9', '#D2E0EE', '#E1E4F4', '#F0F5F9', '#FFFFFF']
 
 
-def difference_plot_by_iteration(x, y):
+def difference_plot_by_iteration(x, y, y_expected=None):
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Maximal number of iterations j')
     ax.set_ylabel(r'$100 \cdot \frac{|A_{js} - A_{is}|}{|A_{is}|}$')
     ax.set_title(r'Evolution of relative error (%)')
     ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
-    ax.loglog(x, np.true_divide(100, x), color='black', linestyle='dashed', linewidth='.5', label='Expected')
+    if y_expected:
+        ax.loglog(x, y_expected, color='black', linestyle='dashed', linewidth='.5', label='Expected')
     plt.legend()
     plt.show()
 
 
-def difference_plot_by_sampling(x, y):
+def difference_plot_by_sampling(x, y, y_expected=None):
     fig, ax = plt.subplots(dpi=150)
     ax.set_xlabel('Number of sampling t')
     ax.set_ylabel(r'$100 \cdot \frac{|A_{it} - A_{is}|}{|A_{is}|}$')
     ax.set_title(r'Evolution of relative error (%)')
     ax.loglog(x, y, color='coral', linewidth='.5', label='Relative error')
-    ax.loglog(x, np.true_divide(100, np.sqrt(x)), color='black', linestyle='dashed', linewidth='.5', label='Expected')
+    if y_expected:
+        ax.loglog(x, y_expected, color='black', linestyle='dashed', linewidth='.5', label='Expected')
+
     plt.legend()
     plt.show()
 

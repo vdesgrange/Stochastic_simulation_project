@@ -67,7 +67,7 @@ def estimate_error_by_sampling(re, im, w, h, s, i, sampling_method):
         a_it = (count / t) * a  # Estimation of the area of the Mandelbrot set for i iteration and t samples.
         err = 100 * (abs(a_it - a_is) / abs(a_is))   # Relative error in percent
         y.append(err)  # Error
-    return x, y
+    return x, y, a_is
 
 
 def study_difference_by_iteration_q3(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
@@ -75,7 +75,12 @@ def study_difference_by_iteration_q3(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT):
     Get difference between A_js and A_is : number of iteration
     Get abs(A_js - A_is) for all j < i, then plot the results.
     params:
-    i: max iterations to be tested
+    :param s: Maximal number of samples
+    :param i: Number of iteration
+    :param re: tuple of (minimal, maximal) coordinates of real axis
+    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
+    :param w: width of the plan
+    :param h: height of the plan
     """
 
     x_rand, y_rand, _ = estimate_error_by_iteration(re, im, w, h, s, i, sampling_method=pure_random)
@@ -90,8 +95,13 @@ def study_difference_by_iteration(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, samplin
     """
     Get difference between A_js and A_is : number of iteration
     Get abs(A_js - A_is) for all j < i, then plot the results.
-    params:
-    i: max iterations to be tested
+    :param s: Maximal number of samples
+    :param i: Number of iteration
+    :param re: tuple of (minimal, maximal) coordinates of real axis
+    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
+    :param w: width of the plan
+    :param h: height of the plan
+    :param sampling_method: sampling method used by monte-carlo
     """
     nb_try = 50
     a_is = 0
@@ -106,28 +116,48 @@ def study_difference_by_iteration(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, samplin
     for j in i_range:
         sample_mean_error.append(sample_mean(relative_error_stack[:, j]))
 
+    y_expected = None
+    if sampling_method == pure_random:
+        y_expected = np.true_divide(100, np.sqrt(i_range))
+
     print("Mandelbrot set average estimated area : ", a_is)
-    graphic_utils.difference_plot_by_iteration(i_range, sample_mean_error)
+    graphic_utils.difference_plot_by_iteration(i_range, sample_mean_error, y_expected)
     return i_range, sample_mean_error
 
 
-def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=pure_random):
+def study_difference_by_sampling(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT, sampling_method=halton_sequence):
     """
     Get difference between A_it and A_is : number of samples
     Get abs(A_it - A_is) for all t < i, then plot the results.
+    :param s: Maximal number of samples
+    :param i: Number of iteration
+    :param re: tuple of (minimal, maximal) coordinates of real axis
+    :param im: tuple of (minimal, maximal) coordinates of imaginary axis.
+    :param w: width of the plan
+    :param h: height of the plan
+    :param sampling_method: sampling method used by monte-carlo
     """
-    nb_try = 100
+    nb_try = 50
+    a_is = 0
     relative_error_stack = np.zeros((nb_try, s))
     for t in range(nb_try):
-        x, y = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method)
+        x, y, a = estimate_error_by_sampling(re, im, w, h, s, i, sampling_method)
         relative_error_stack[t] = y
+        a_is = recursive_sample_mean(a, a_is, t)
 
     s_range = range(0, s, 50)
     sample_mean_error = []
     for j in s_range:
         sample_mean_error.append(sample_mean(relative_error_stack[:, j]))
 
-    graphic_utils.difference_plot_by_sampling(s_range, sample_mean_error)
+    y_expected = None
+    if sampling_method == pure_random:
+        y_expected = np.true_divide(100, np.sqrt(s_range))
+    elif sampling_method == halton_sequence:
+        y_expected = np.true_divide(100, s_range)
+
+    print("Mandelbrot set average estimated area : ", a_is)
+    graphic_utils.difference_plot_by_sampling(s_range, sample_mean_error, y_expected)
     return s_range, sample_mean_error
 
 
