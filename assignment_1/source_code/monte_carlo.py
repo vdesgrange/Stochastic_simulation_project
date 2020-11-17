@@ -57,6 +57,6 @@ if __name__ == '__main__':
 		im=(mandelbrot.IM_MIN, mandelbrot.IM_MAX),
 		w=mandelbrot.WIDTH,
 		h=mandelbrot.HEIGHT,
-		s=100000,
+		s=1000,
 		i=1000,
 		sampling_method=latin_square_chaos)

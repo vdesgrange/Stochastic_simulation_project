@@ -160,8 +160,8 @@ def study_convergence_samples_quasi_normal(s, i, re=RE, im=IM, w=WIDTH, h=HEIGHT
 
 if __name__ == '__main__':
     # Q2 Convergence of MC
-    # study_difference_by_iteration(1000, 1000)  # Report: 5000, 20000
-    # study_difference_by_sampling(1000, 1000)  # Report: 100000, 1000
+    study_difference_by_iteration(1000, 1000)  # Report: 5000, 20000
+    study_difference_by_sampling(1000, 1000)  # Report: 100000, 1000
     
     # Q4 Randomised Quasi-MC vs MC
-    study_convergence_samples_quasi_normal(5000, 800)  # Report: 5000, 800
+    study_convergence_samples_quasi_normal(1000, 800)  # Report: 5000, 800

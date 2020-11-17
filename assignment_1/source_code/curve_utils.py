@@ -2,9 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from numpy.polynomial import Polynomial
-from numpy.polynomial.polynomial import polyval
+
 
 def estimate(x, y):
+    """
+    NOT USED - Experiments
+    """
     def func(x, a, b, c):
         return a*x**2 + b*x + c
 
@@ -25,12 +28,20 @@ def estimate(x, y):
     plt.loglog(x, fd, 'b-')
     plt.show()
 
+
 # takes a polynomial and returns the slope at point x 
 def slope(poly, x):
+    """
+    NOT USED - Experiments
+    """
     deriv = poly.deriv()
     return deriv(x)
 
+
 def estimate_polyfit(x, y, labels):
+    """
+    NOT USED - Experiments
+    """
     ## x is a list of numpy arrays
     ## y is a list of numpy arrays
     ## labels is a list of strings
