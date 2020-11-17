@@ -9,6 +9,7 @@ from sampling_method import pure_random, halton_sequence, latin_square_chaos, or
 import numpy as np
 from scipy import stats
 
+
 def assignment_1_main():
     print("====================================")
     print("=== 1 - Visualize Mandelbrot set ===")
@@ -41,27 +42,28 @@ def assignment_1_main():
     mandelbrot.mandelbrot_visualizer_tool(img3)
     print("Done")
 
-    print("===================================")
-    print("=== 2 - Investigate convergence ===")
-    print("===================================")
-
     print("=== Study convergence of mandelbrot set in complex plan")
     study_mandelbrot.example_convergence()
     # study_mandelbrot.study_convergence_mandelbrot(re, im, w, h)  # For random examples
     print("Done")
 
+    print("===================================")
+    print("=== 2 - Investigate convergence ===")
+    print("===================================")
+
     print("=== Evolution of difference by number of iterations and sampling ===")
     print("Pure random sampling method")
-    print("Evolution of difference from 0 to 1000 iteration with 10^4 random points")
+    print("Evolution of difference from 0 to 20000 iteration with 5000 random points")
     print("(note: smaller value from report to accelerate computing time)")
 
-    investigate_convergence.study_difference_by_iteration(1000, 1000, re, im, w, h)  # In report s=5000, i=10000
-
+    investigate_convergence.study_difference_by_iteration(1000, 1000, re, im, w, h)  # In report s=5000, i=20000
+    investigate_error.study_iteration_convergence_single_method(1000, 1000, re, im, w, h)  # In report s=5000, i=20000
     print("Done")
 
-    print("Evolution of difference from 0 to 10^4 random pints with [500, 800, 1000] iterations")
+    print("Evolution of difference from 0 to 20000 random points with 1000 iterations")
     print("(note: smaller value from report to accelerate computing time)")
-    investigate_convergence.study_difference_by_sampling(1000, 1000, re, im, w, h) # In report s=50000, i=1000
+    investigate_convergence.study_difference_by_sampling(1000, 1000, re, im, w, h)  # In report s=100000, i=1000
+    investigate_error.study_samples_convergence_single_method(1000, 1000, re, im, w, h)  # In report s=50000, i=20000
     print("Done")
 
     print("================================================")
@@ -95,7 +97,7 @@ def assignment_1_main():
 
     print("=== Study confidence interval by sampling method, When to Stop Algorithm ===")
     print("=== Pure random ===")
-    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, pure_random)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -103,7 +105,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Latin Hypercube ===")
-    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 800, re, im, w, h, latin_square_chaos)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -111,7 +113,7 @@ def assignment_1_main():
     print("Done")
 
     print("=== Orthogonal Sampling ===")
-    x_, s2_, min, max, it, _ = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal_native)
+    x_, s2_, min, max, it = statistical_analysis.confidence_interval_estimate(0.008, 50, 10000, 1000, re, im, w, h, orthogonal_native)
     print('Iterations it = ', it)
     print("Sample mean     x_  = ", x_)
     print("Sample variance s2_ = ", s2_)
@@ -165,7 +167,7 @@ def assignment_1_main():
     print("================================================")
     print("=== 4 - Generate Variance Graphs ===")
     print("================================================")
-    investigate_error.study_samples_convergence(50000, 1000)
+    investigate_error.study_samples_convergence(50000, 1000)  # Report: s=50000, i=1000
     investigate_error.study_iteration_convergence(10000, 1500)
 
 if __name__ == '__main__':

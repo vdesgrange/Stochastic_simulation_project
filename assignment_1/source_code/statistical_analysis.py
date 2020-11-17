@@ -6,35 +6,35 @@ from monte_carlo import monte_carlo_integration
 from sampling_method import pure_random, halton_sequence
 
 
-# def confidence_interval_estimate(l, k, s, i, re, im, w, h, sampling_method=pure_random):
-#     """
-#     Compute mandelbrot set area sample mean, variance and confidence interval (assuming central limit theorem).
-#     Continue simulations until interval condition is met.
-#     :param l:
-#     :param k: Minimal number of simulation to run
-#     :param s: Number of samples for Monte carlo
-#     :param i: Maximal number of iteration
-#     :param sampling_method: sampling method used
-#     :return: sample mean, sample variance and confidence interval
-#     """
-#     x = []
-#     s2_ = x0_ = x1_ = 0
-#     interval = 1
-#     it = 0
-#
-#     while it < k or interval >= l:
-#         a, _, _ = monte_carlo_integration(re, im, w, h, s, i, sampling_method)
-#         x.append(a)
-#         x1_ = recursive_sample_mean(a, x0_, len(x) - 1)
-#         s2_ = recursive_sample_variance(s2_, x1_, x0_, len(x) - 1)
-#         x0_ = x1_
-#         min, max, interval = confidence_interval_ppf(x1_, np.sqrt(s2_), 0.05, len(x))
-#         it += 1
-#
-#     return x1_, s2_, min, max, it
-
-
 def confidence_interval_estimate(l, k, s, i, re, im, w, h, sampling_method=pure_random):
+    """
+    Compute mandelbrot set area sample mean, variance and confidence interval (assuming central limit theorem).
+    Continue simulations until interval condition is met.
+    :param l:
+    :param k: Minimal number of simulation to run
+    :param s: Number of samples for Monte carlo
+    :param i: Maximal number of iteration
+    :param sampling_method: sampling method used
+    :return: sample mean, sample variance and confidence interval
+    """
+    x = []
+    s2_ = x0_ = x1_ = 0
+    interval = 1
+    it = 0
+
+    while it < k or interval >= l:
+        a, _, _ = monte_carlo_integration(re, im, w, h, s, i, sampling_method)
+        x.append(a)
+        x1_ = recursive_sample_mean(a, x0_, len(x) - 1)
+        s2_ = recursive_sample_variance(s2_, x1_, x0_, len(x) - 1)
+        x0_ = x1_
+        min, max, interval = confidence_interval_ppf(x1_, np.sqrt(s2_), 0.05, len(x))
+        it += 1
+
+    return x1_, s2_, min, max, it
+
+
+def confidence_interval_estimate_details(l, k, s, i, re, im, w, h, sampling_method=pure_random):
     """
     Compute mandelbrot set area sample mean, variance and confidence interval (assuming central limit theorem).
     Continue simulations until interval condition is met
@@ -92,7 +92,7 @@ def confidence_interval_estimate_fixed(k, s, i, re, im, w, h, sampling_method=pu
 
 if __name__ == '__main__':
     print("Determine confidence interval...")
-    x_, s2_, min, max, _, _ = confidence_interval_estimate(
+    x_, s2_, min, max, _ = confidence_interval_estimate(
         l=0.02,
         k=100,
         s=1000,
