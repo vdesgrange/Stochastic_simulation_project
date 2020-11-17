@@ -249,9 +249,8 @@ def study_samples_convergence_single_method(s, i, re=RE, im=IM, w=WIDTH, h=HEIGH
     graphic_utils.plot_convergence_single_method(np.array(s_range), area_stack, 'Number of samples s')
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # study_iteration_convergence_single_method(5000, 10000)
-    study_samples_convergence_single_method(100, 100)
+    # study_samples_convergence_single_method(100, 100)
     # study_samples_convergence(5000, 1000)
     # study_iteration_convergence(1000, 1500)
-

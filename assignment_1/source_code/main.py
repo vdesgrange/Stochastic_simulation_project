@@ -1,5 +1,6 @@
 import mandelbrot
 import investigate_convergence
+import investigate_error
 import statistical_analysis
 import statistical_analysis_utils
 import study_mandelbrot
@@ -160,6 +161,12 @@ def assignment_1_main():
 
     print(stats.ttest_ind(np.array(res_orth), np.array(res_hal), equal_var = False))
 
+
+    print("================================================")
+    print("=== 4 - Generate Variance Graphs ===")
+    print("================================================")
+    investigate_error.study_samples_convergence(50000, 1000)
+    investigate_error.study_iteration_convergence(10000, 1500)
 
 if __name__ == '__main__':
     assignment_1_main()
