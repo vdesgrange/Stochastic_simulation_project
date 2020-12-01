@@ -1,0 +1,10 @@
+*.DS_STORE
+__pycache__/
+./source_code/__pycache__/
+.idea
+
+# no latex temporary / compilation files
+*.toc
+*.log
+*.dvi
+*.aux
