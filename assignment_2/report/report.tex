@@ -35,12 +35,12 @@ top=30mm,
 
 
     \section*{Abstract}
-    Queueing theory is the study of waiting lines or queues. Queueing theory can be useful when analysing a wide range of problems which involve some elements of queue lengths or waiting times. In this assignment, instead of focussing on a specific application such as a supermarket or an assembly line, we will consider queues in the most general, abstract sense. This means the results we derive can then be replicated in any application of these sets of ideas. In this assignment, we focus on one particular metric, the expected wait time of an agent in the queue. We investigate how different model formulations impact on the mean and the variance of this metric. Special attention will be paid to varying the number of servers, system load, different queue types and different service-time distributions.
+    Queueing theory is the study of waiting lines or queues. Queueing theory can be useful when analysing a wide range of problems which involve some elements of queue lengths or waiting times. In this assignment, instead of focusing on a specific application such as a supermarket or an assembly line, we will consider queues in the most general, abstract sense. This means the results we derive can then be replicated in any application of these sets of ideas. In this assignment, we focus on one particular metric, the expected wait time of an agent in the queue. We investigate how different model formulations impact on the mean and the variance of this metric. Special attention will be paid to varying the number of servers, system load, different queue types and different service-time distributions. We succeed in replicating our theoretical results with statistical significance and demonstrating how different values of $\rho$ require different optimum customer numbers. Additionally, we show that job-first scheduling is advantageous in reducing the wait time when the system is under high load. We found that a deterministic service-time distribution can lead to lower median wait times and other convenient statistical properties of our estimate. Finally, we found that one component of the hyper-exponential distribution tends to dominate the other component in relation to its impact on the wait time.
 
     \section*{Introduction}
-    Queuing theory as a research area has its origins in the work of Agner Erlang. Erlang was a Danish staticiatian and mathematician who spent part of his career creating models to describe the switchboard system of the Copenhagen Telephone Exchange company. Erland wanted to understand how many switchboard circuits were required to maintain a reasonable standard of telephone service and how many telephone operators were required to manage a given volume of calls. (Erlang, 1920) is Erlang's principal work on waiting times, assuming constant hold times.
+    Queuing theory as a research area has its origins in the work of Agner Erlang. Erlang was a Danish staticiatian and mathematician who spent part of his career creating models to describe the switchboard system of the Copenhagen Telephone Exchange company. Erlang wanted to understand how many switchboard circuits were required to maintain a reasonable standard of telephone service and how many telephone operators were required to manage a given volume of calls. (Erlang, 1920) is Erlang's principal work on waiting times, assuming constant hold times.
 
-    (Adan and Resing, 2002) describe some of the key features which characterise a queuing model. The first feature concerns how agents enter our system, the arrival process of customers. Often we model these with exponentially distributed inter-arrival times. In our model, customers will arrive individually, but it is relatively common for batch-arrivals to be modelled. We can also model the behaviour of customers, for instance some customers might choose to leave the system if they haven't been served for a certain period of time. In certain implementations these customers may come back at a later time if a queue is too large when they arrive.
+    (Adan and Resing, 2002) describes some of the key features which characterise a queuing model. The first feature concerns how agents enter our system, the arrival process of customers. Often we model these with exponentially distributed inter-arrival times. In our model, customers will arrive individually, but it is relatively common for batch-arrivals to be modelled. We can also model the behaviour of customers, for instance some customers might choose to leave the system if they haven't been served for a certain period of time. In certain implementations these customers may come back at a later time if a queue is too large when they arrive.
 
     The completion of jobs in our system can be modelled as as a service time distribution, independent of the arrival-time distribution. We usually assume that the service time values are independent and identically distributed. We assume that agents are processed one at a time by each server (if there are multiple). The number of servers is often denoted as c. There may be just one server processing jobs, or there could be multiple.
 
@@ -58,13 +58,28 @@ top=30mm,
 
     \subsection*{Average waiting times and queuing theory}
 
-    The queuing theory tells that $E(W)$ is smaller for a $M/M/c$ queue (with system load $\rho$, capacity $\mu$ and number of servers $c$) than for $M/M/1$ queue. In our research we would like to verify this theory, therefore we need to determine the average waiting time $E(W)$ with FIFO scheduling. To do so, we consider the general case $M/M/c$.\\
-    First, we suppose that $\rho$ is the fraction of time during which the $c$ servers are working, where $\rho = \frac{\lambda}{c\mu} < 1$ (to ensure that the queue length remains manageable). The equilibrium distribution depends not directly on $\lambda$ and $\mu$ but only through their ratio, $\rho$.\\
-    Let $p_n$ denote the probability that the system is at a steady state with $n$ jobs, such that $\sum_{n=0}^{\inf} p_n = 1$.
-    Then, we can express $p_n$ as: (TO IMPROVE)
+    The queuing theory tells that $E(W)$ is smaller for a $M/M/c$ queue (with system load $\rho$, capacity $\mu$ and number of servers $c$) than for $M/M/1$ queue following the first in - first out discipline.
+    As the main objective of our paper focus on the understanding of queue system for tasks management, we would like to verify this assumption. Therefore, we need to determine the average waiting time $E(W)$ with FIFO scheduling, to do so, we consider the general case $M/M/c$ using exponential distribution.\\
+    \begin{itemize}
+        \item First, we suppose that $\rho = \frac{\lambda}{c\mu}$, the fraction of time during which the $c$ servers are working, is smaller than 1 (to ensure that the queue length remains manageable).
+        \item Second, we note $p_n$ the equilibrium probability to have $n$ jobs in the system, thus $\sum_{n=0}^{\inf} p_n = 1$
+    \end{itemize}
+
+    As we know the current state on the system depends on the number of jobs in the system, we can represent the system as a flow diagram (See Figure \ref{fig:flow_diagram_mmc}), where the node represents the  the different states of our system (number of jobs) and the arrows the transition from one state to the following:
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=.9\textwidth]{pictures/part_1/flow_diagram_mmc.png}
+        \caption{Flow diagram for $M/M/c$ queue. (Adan, Resing, 2002.  Queueing Theory)}
+        \label{fig:flow_diagram_mmc}
+    \end{figure}
+
+    A transition from a state $n$ to the state $n+1$ ($+1$ job) occur at the arrival rate $\lambda$.
+    However, since we have $c$ servers, the transition from a state $n$ to a state $n-1$ occur at capacity (departure) rate $min(n, c) \mu$.
+
+    Then, we can express $p_n$, the equilibrium probability to have n jobs in the system as:
 
     \begin{align}
-        \lambda p_{n-1} = min(n, c) \mu p_n \\
         p_n = \frac{\lambda}{min(n, c) \mu} p_{n - 1}
     \end{align}
 
@@ -73,7 +88,8 @@ top=30mm,
         p_n = \Big(\frac{\lambda}{\mu} \Big)^n \Big(\frac{1}{min(n, c)} .  \frac{1}{min(n - 1, c)} \ldots \Big) p_0
     \end{equation}
 
-    So, if $n \leq c$, with $n = 0, \ldots, c$
+    So, we consider 2 cases: a first case where the number of servers $c$ greater or equal to the number of jobs $n$; and a second case where the number of jobs $n$ is greater than $c$.\\
+    So, if $n \leq c$, with $n = 0, \ldots, c$, then
 
     \begin{align}
         p_n &= \Big( \frac{\lambda}{\mu} \Big)^n \frac{1}{n!} p_0
@@ -89,10 +105,12 @@ top=30mm,
         = \frac{1}{c^m} \frac{1}{c!} \frac{c^c}{c^c} \Big( \frac{\lambda}{\mu} \Big)^c \Big( \frac{\lambda}{\mu} \Big)^m p_0
         = \frac{(c \rho)^c}{c!} \frac{1}{c^m} \Big( \frac{\lambda}{\mu} \Big)^m p_0
         = p_c \rho^m
+        \label{eq:p_c_plus_m}
     \end{align}
 
-    We now have a mathematical definition of the equilibrium probability $p_n$. But in order to determine $E(W)$, we must also determine the case $p_0$, required for the last part of the demonstration.\\
-    The probabilities are such that $\sum_{n=0}^{\inf} p_n = 1$, therefore we have:
+    We now have a new mathematical definition of the equilibrium probability $p_n$.
+    But in order to determine $E(W)$, we must also determine the case $p_0$, required for the last part of the demonstration.\\
+    As we know that the equilibrium probabilities are such that $\sum_{n=0}^{\inf} p_n = 1$, therefore we have:
 
     \begin{align}
         1 &= \lim_{N\to\infty} \sum_{n=0}^{c - 1} p_n + \sum_{m=0}^{N} p_{c + m} \\
@@ -113,7 +131,7 @@ top=30mm,
         \label{eq:p0}
     \end{align}
 
-    Given that our queuing system is defined with Poisson arrival (M/./.), we can use the PASTA property (the fraction of customers finding on arrival the system in a state N is equal to the fraction of time the system is in state N) to define the probability $\prod_W$ that a job has to wait :
+    Given that our queuing system is defined with Poisson arrival (M/./.), we can use the PASTA property, and the Equation \ref{eq:p_c_plus_m}, to define the probability $\Pi_W$ that a job has to wait :
 
     \begin{align}
         \Pi_W &= p_c + p_{c+1} + p_{c+2} + \ldots \\
@@ -121,26 +139,40 @@ top=30mm,
         \label{eq:pi_w}
     \end{align}
 
-    As we know from Eq \ref{eq:p0} that $p_c = \rho^0 \frac{(c \rho)^c}{c!}p_0$, we come to:
+    As we know from Equation \ref{eq:p0} that $p_c = \rho^0 \frac{(c \rho)^c}{c!}p_0$, we can transform the Equation \ref{eq:pi_w} :
 
     \begin{equation}
         \lim_{N\to\infty} \Pi_W = \frac{(c \rho)^c}{c !} \Big((1 - \rho) \sum_{n = 0}^{c-1}\frac{(c \rho)^n}{n !} + \frac{(c \rho)^c}{c !} \Big)^{-1}
     \end{equation}
 
     Let's now consider \emph{Little's Law}, which define the relation: $E(W) = E(L^q) \lambda^{-1}$, where $E(L^q)$ is the average length of the queue.
-    $E(L^q)$ can be define as the summation of all the expected number of jobs $n$ beyond the capacity $c$ of the queue system. So we have (using Eq \ref{eq:pi_w}) :
+    $E(L^q)$ can be define as the summation of all the expected number of jobs $n$ beyond the capacity $c$ of the queue system. So we have (using Equation \ref{eq:pi_w}) :
 
     \begin{align}
-        E(L^q) &= \sum_{n=0}^{\infty} n p_{c + n} = \sum_{n=0}^{\infty} n p_c \rho^n = \frac{p_c}{1 - \rho} \sum_{n=0}^{\infty} n (1 - \rho) \rho^n = \Pi_W \Big(\frac{\rho^{\infty} - 1}{\rho - 1} - 1 \Big) = \Pi_W \frac{\rho}{1 - \rho}
+        E(L^q) &= \sum_{n=0}^{\infty} n p_{c + n} = \sum_{n=0}^{\infty} n p_c \rho^n = \frac{p_c}{1 - \rho} \sum_{n=0}^{\infty} n (1 - \rho) \rho^n
+        \label{eq:e_l_q}
     \end{align}
 
-    Finally, we have the definition of $E_c(W)$ for an $M/M/c$ queue:
+    And considering that:
+    \begin{align}
+        \sum_{n=0}^{\infty} n (1 - \rho) \rho^n &= 0 + (\rho - \rho^2) + (2\rho^2 -2\rho^3) \ldots = 0 + \rho + \rho^2 + \rho^3 + \ldots \\
+        \sum_{n=0}^{\infty} n (1 - \rho) \rho^n &= \lim_{N\to\infty} \frac{\rho^{N + 1} - 1}{\rho - 1} - 1 = \lim_{N\to\infty} \frac{\rho}{1 - \rho}
+    \end{align}
+
+    Then we can transform the Equation \ref{eq:e_l_q}:
+
+    \begin{align}
+        E(L^q) &= \lim_{N\to\infty} \Pi_W \sum_{n=0}^{N} n (1 - \rho) \rho^n = \Pi_W \frac{\rho}{1 - \rho}
+        \label{eq:e_l_q}
+    \end{align}
+
+    Finally, from the \emph{Little's Law} relation $E(W) = E(L^q) \lambda^{-1}$, from the Equation \ref{eq:pi_w}, the Equation \ref{eq:e_l_q} and the relation $\rho = \frac{\lambda}{c\mu}$;we obtain the definition of $E_c(W)$ for an $M/M/c$ queue:
 
     \begin{equation}
         E_c(W) = \frac{(c \rho)^c}{c !} \Big((1 - \rho) \sum_{n = 0}^{c-1}\frac{(c \rho)^n}{n !} + \frac{(c \rho)^c}{c !} \Big)^{-1} \frac{1}{1 - \rho} \frac{1}{c \mu}
     \end{equation}
 
-    And we can derive the average waiting time for an $M/M/1$ queue:
+    From which, we can derive the average waiting time for an $M/M/1$ queue:
     \begin{equation}
         E_1(W) =  \frac{\rho}{(1 - \rho)\mu}
     \end{equation}
@@ -186,7 +218,7 @@ top=30mm,
     \newpage
 
     \section{Results}
-    \subsection*{Influence of system load $\rho$ over average waiting time $E_c(W)$}
+    \subsection*{Verifying Theoretical Wait Time Results}
 
     Now that we have derived the theoretical E(w) times, we will simulate our queuing system and estimate the expected wait times. In our first experiment, we will simulate our queuing system 50 times, with each simulation having 5000 total customers. After each simulation we obtain the mean wait time, and form a sample of mean wait times to perform statistics on. We will obtain estimates of $E_1(W), E_2(W)$ and $E_4(W)$ given $\rho = 0.9$. In our previous assignment, (Desgrange \& Kingsbury, 2020), sample variance and t test methods were explained and derived which we will use again here.
 
@@ -232,6 +264,8 @@ top=30mm,
         \label{fig:samp_var}
     \end{figure}
 
+    \subsection*{Influence of system load $\rho$ over average waiting time $E_c(W)$}
+
     All of the experiments above were conducted with a relatively high value of $\rho$ and a large number of customers and repeat simulations. However, we are interested in how the estimate of the sample mean of $E_c(W)$ varies as we vary the value of $\rho$. Do we observe a higher variance of our sample mean estimator as we increase the value of $\rho$? Figure~\ref{fig:samp_var} shows the results of an experiment which aims to investigate how the sample variance of our mean waiting time evolves as we increase $\rho$. The experiment was run with parameters $\mu = 1$, $c = 1$ and the sample variance of our $E_1(W)$ estimate over 30 simulation runs is measured on the y axis. Sample variance increases superlinearly with $\rho$, note the log scale on the Y-axis. As the system load increases, wait times become more unpredictable for any given agent joining the queue. In an overloaded system, one abnormally long sampled service time has a large effect on the wait time of all agents in the queue, leading to more unpredictable wait times on average. We note that for any given level of $\rho$, the variance of our estimator tends to be reduced the greater the number of total customers.\\
 
     \begin{figure}[!ht]
@@ -264,7 +298,7 @@ top=30mm,
         \item A simple function which return an int from a float while keeping some precision: $f(x) = x * 10^8$. However, it only minimize the error, it remains an approximation of real job ordering.
         \item Use the geometric distribution, discrete version of exponential distribution.
     \end{enumerate}
-    As an easy way out, we decided to start our experiments with the simple conversion.\\
+    For the sake of convenience, we decided to start our experiments with the simple conversion.\\
 
     In this experiment we run 50 simulations with a total of 10,000 jobs. We store the average waiting time from each simulations then study its distribution. We fix the servers capacity $\mu = 1$ in a first time, and observe for different values of $\rho$. We will next observe the evolution of sample variance $S^2$ and sample mean $E_c(W)$ by $\rho$ in a second time.
     Our assumption is that job scheduling by priority should improve the average waiting time $E_c(W)$ but also influence the variance given that waiting time will be influence by priority while it was only influence by exponential distribution of the jobs in the FIFO system.
@@ -307,7 +341,7 @@ top=30mm,
 
     \subsection*{Influence of service rate distribution}
 
-    We will now investigate how adopting a deterministic service time distribution affects the properties of our $E_c(W)$ estimate. We will run an experiment to compare the distribution of the mean waiting times obtained from a exponential service time distribution and those from a deterministic wait time distribution. We run 50 simulations each having 10,000 total customers. We take the mean wait time in each simulation and create a distribution of mean wait times to perform statistical testing on. We use the parameters $\mu = 1$ and $\rho = 0.9$. Despite having shown in the previous section that an increased value of $\rho$ increases the sample variance, we still choose to use a high value of $\rho$ as the results in the this section are slightly clearer at this level. We hypothesize that the wait times under the deterministic scenario will have a lower average value and tighter confidence intervals owing to reduced sample variance.
+    We will now investigate how adopting a deterministic service time distribution affects the properties of our $E_c(W)$ estimate. We will run an experiment to compare the distribution of the mean waiting times obtained from a exponential service time distribution and those from a deterministic distribution. We run 50 simulations each having 10,000 total customers. We take the mean wait time in each simulation and create a distribution of mean wait times to perform statistical testing on. We use the parameters $\mu = 1$ and $\rho = 0.9$. Despite having shown in the previous section that an increased value of $\rho$ increases the sample variance, we still choose to use a high value of $\rho$ as the results in the this section are slightly clearer at this level. We hypothesize that the wait times under the deterministic scenario will have a lower average value and tighter confidence intervals owing to reduced sample variance.
 
     \begin{figure}[h]
         \centering
@@ -375,13 +409,11 @@ top=30mm,
     Figure~\ref{fig:samp_var_hypexp} shows the sample variance of our expected waiting time estimates for different numbers of system agents with a single slot ($c = 1$). At values of $\rho > 0.5$, the variance is quite well behaved, for a fixed value of $\rho$ a system with greater total customers has a slightly lower variance. However, when the system is overloaded ($\rho > 0.5$), more customers leads to a higher variance of our estimate. This is because at any one time, there are likely to be more agents in the queue and thus if a particularly large job is sampled from the service time distribution, then it affects a greater number of waiting customers, pushing up the expected wait time and the variance of our value.
 
     \section*{Conclusion}
+    Throughout this paper, we have studied the queuing theory and experimented with several characteristics of well-known queue systems, such as influence of resources, service time distributions and jobs scheduling systems on the statistical properties of the expected waiting time. Our theoretical results suggested that resources (here servers) capacity would greatly influence the average waiting times, especially as the system load $\rho \rightarrow{1}$. It follows that when applying our results to a real-life system, an efficient queue should have a large margin between its actual system load and its theoretical maximal system load to maximise performance. The variance of the average waiting time will increase as well, the the waiting time becomes more unpredictable for every new jobs arriving in the queue. Our results show that for a high value of $\rho$ the distribution of average waiting time would diverge from a normal distribution if we have a large number of customers, the inverse will be true if we have a small $\rho$.
 
-    Throughout this paper, we have studied the queuing theory and experimented the several characteristics of well-known queue systems, such as influence of resources, service time distribution and jobs scheduling systems on system availability, more precisely expected waiting time.
-    Our first research confirmed that resources (here servers) capacity would greatly influence the average waiting times. Indeed as the system load $\rho$ (which in the case of a multi-server systems depends on the number of servers in top of arrival rate and server capacity) increase and tend to $1$ (limit of the system capacity); the variance of the average waiting time will increase as well, that is to say the the waiting time become more unpredictable for every new jobs arriving in the queue. And logically, our results show that the distribution of average waiting time would diverge from a normal distribution as system load $\rho$ increase.
-    From this first element, we conclude that an efficient queue system should have a large margin between its actual system load and its theoretical maximal system load.\\
-    In the next step of our research, we saw that a careful evaluation of the jobs characteristics and the choice of an adequate server disciplines  would influence as well on the efficiency of jobs sojourn time.
-    In this specific case, as the system load $\rho$ increase,  the usage of a non-preemptive priority discipline to schedule jobs shows obvious improvement of the median wait time in comparison to a simple first in - first out scheduling system, as well as a tighter sample variance. From this second observation we come to the conclusion that an adequate queue system scheduling improve the management of jobs when the system load get closer to limits of the servers capacity, a welcome characteristic in real life system which must handle daily traffic peak.\\
-    Finally, we observe that service time distribution ...
+    When investigating job-first scheduling, we saw that a careful evaluation of the jobs characteristics and the choice of an adequate server disciplines  would influence as well on the efficiency of jobs sojourn time. In this specific case, as the system load $\rho$ increases above $0.5$, the usage of a non-preemptive priority discipline to schedule jobs shows obvious improvement of the median wait time in comparison to a simple first in - first out scheduling system, as well as a reduced sample variance. From our results, we come to the conclusion that an adequate queue system scheduling improves the management of jobs when the system load get closer to limits of the servers capacity.
+
+    We then investigated the behaviour of a deterministic service time distribution, obtaining lower median wait times, a smaller range of values, tighter 95\% confidence intervals for the medians and reduced sampling variance compared to the system with exponentially distributed service times. Finally, we combined two exponential distributions with different parameters to form a hyperexponential distribution. Broadly, we found that the component of the distribution with a smaller $\lambda$ parameter dominated the component with a larger $\lambda$ as the former component was prone to cause extremely large service times, leading to a spike in the expected wait times, especially as $\rho \rightarrow{1}$ in a $c = 1$ system.
 
 
     \clearpage
@@ -396,8 +428,5 @@ top=30mm,
     \end{itemize}
 
     \clearpage
-
-    \appendix
-    \appendixpage
 
 \end{document}
